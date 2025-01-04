@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "0uTzZ1AFtL4EGOfkHj7z5D485NGQ68p0geleNiYbiZQ+I7Uq1lxDOef0j+0cSUWxOExubpOQsIJ/z485eI+fdA==",
+  "success": true,
+  "projectFilePath": "D:\\Job\\Thắng\\clonebe\\ATO_BackEnd\\ATO_Backend\\ATO_API\\ATO_API.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\-ASUS-\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
+    "C:\\Users\\-ASUS-\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",
+    "C:\\Users\\-ASUS-\\.nuget\\packages\\swashbuckle.aspnetcore\\6.4.0\\swashbuckle.aspnetcore.6.4.0.nupkg.sha512",
+    "C:\\Users\\-ASUS-\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.4.0\\swashbuckle.aspnetcore.swagger.6.4.0.nupkg.sha512",
+    "C:\\Users\\-ASUS-\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.4.0\\swashbuckle.aspnetcore.swaggergen.6.4.0.nupkg.sha512",
+    "C:\\Users\\-ASUS-\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\6.4.0\\swashbuckle.aspnetcore.swaggerui.6.4.0.nupkg.sha512"
+  ],
+  "logs": []
+}
