@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  ato_api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=5000
+      - ASPNETCORE_HTTPS_PORTS=5001
+      - "DatabaseSettings:DefaultConnection=Server=ATO_Database;Database=TeduBlog;User Id=sa;Password=123456;TrustServerCertificate=true"
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ros

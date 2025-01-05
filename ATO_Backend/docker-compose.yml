@@ -1,0 +1,36 @@
+﻿version: '3.4'
+
+services:
+  ato_api:
+    image: ${DOCKER_REGISTRY-}atoapi
+    container_name: atoapi
+    build:
+      context: .
+      dockerfile: ATO_API/Dockerfile
+    ports:
+    - "5000:5000"
+    - "5001:5001"
+
+  database:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: atodatabase
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_PID=Express
+      - SA_PASSWORD=123456
+      - MSSQL_DB=ATO_Database
+    ports:
+      - "1433:1433"
+
+    networks:
+      - app-network
+
+  products.cache:
+    image: redis:latest
+    restart: always
+    ports:
+      - '6379:6379'
+
+networks:
+  app-network:
+    driver: bridge
