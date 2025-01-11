@@ -3,34 +3,65 @@ services:
   ato_api:
     build:
       context: D:\Job\Thắng\clonebe\ATO_BackEnd\ATO_Backend
-      dockerfile: ATO_API\Dockerfile
+      dockerfile: ATO_API/Dockerfile
+    container_name: atoapi
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_HTTP_PORTS: "8080"
-      ASPNETCORE_HTTPS_PORTS: "8081"
+      ASPNETCORE_HTTP_PORTS: "5000"
+      ASPNETCORE_HTTPS_PORTS: "5001"
+      DatabaseSettings:DefaultConnection: Server=ATO_Database;Database=TeduBlog;User Id=sa;Password=123456;TrustServerCertificate=true
     image: atoapi
     networks:
       default: null
     ports:
       - mode: ingress
-        target: 8080
+        target: 5000
+        published: "5000"
         protocol: tcp
       - mode: ingress
-        target: 8081
+        target: 5001
+        published: "5001"
         protocol: tcp
     volumes:
       - type: bind
         source: C:\Users\-ASUS-\AppData\Roaming/Microsoft/UserSecrets
-        target: C:\Users\ContainerUser\AppData\Roaming\Microsoft\UserSecrets
+        target: /home/app/.microsoft/usersecrets
         read_only: true
         bind:
           create_host_path: true
       - type: bind
         source: C:\Users\-ASUS-\AppData\Roaming/ASP.NET/Https
-        target: C:\Users\ContainerUser\AppData\Roaming\ASP.NET\Https
-        read_only: true
+        target: /home/app/.aspnet/https
         bind:
           create_host_path: true
+  database:
+    container_name: atodatabase
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_DB: ATO_Database
+      MSSQL_PID: Express
+      SA_PASSWORD: "123456"
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    networks:
+      app-network: null
+    ports:
+      - mode: ingress
+        target: 1433
+        published: "1433"
+        protocol: tcp
+  products.cache:
+    image: redis:latest
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        target: 6379
+        published: "6379"
+        protocol: tcp
+    restart: always
 networks:
+  app-network:
+    name: dockercompose14811200894164250809_app-network
+    driver: bridge
   default:
     name: dockercompose14811200894164250809_default

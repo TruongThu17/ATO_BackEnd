@@ -142,3 +142,4 @@ D:\Job\Thắng\clonebe\ATO_BackEnd\ATO_Backend\Data\obj\Debug\net8.0\refint\Data
 D:\Job\Thắng\clonebe\ATO_BackEnd\ATO_Backend\Data\obj\Debug\net8.0\Data.pdb
 D:\Job\Thắng\clonebe\ATO_BackEnd\ATO_Backend\Data\obj\Debug\net8.0\Data.genruntimeconfig.cache
 D:\Job\Thắng\clonebe\ATO_BackEnd\ATO_Backend\Data\obj\Debug\net8.0\ref\Data.dll
+D:\Job\Thắng\clonebe\ATO_BackEnd\ATO_Backend\Data\bin\Debug\net8.0\appsettings.json

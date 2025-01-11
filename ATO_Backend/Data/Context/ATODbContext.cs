@@ -1,5 +1,6 @@
 ﻿using Data.Configurations;
 using Data.Models;
+using Data.Seeding;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -92,6 +93,7 @@ namespace Data.ArmsContext
                 .HasForeignKey(rc => rc.RoleId)
                 .OnDelete(DeleteBehavior.Cascade);
             // seeding data
+            new AccountSeeder(modelBuilder).Seed();
         }
         #region DbSet
         public DbSet<Account> Accounts { get; set; }
