@@ -8,8 +8,12 @@ services:
       context: .
       dockerfile: ATO_API/Dockerfile
     ports:
-    - "5000:5000"
-    - "5001:5001"
+      - "5000:5000"
+      - "5001:5001"
+    depends_on:
+      - atodatabase
+    networks:
+      - app-network
 
   atodatabase:
     image: mcr.microsoft.com/mssql/server:2019-latest
@@ -21,15 +25,16 @@ services:
       - MSSQL_DB=ATO_Database
     ports:
       - "1433:1433"
-
     networks:
       - app-network
 
-  products.cache:
+  ato.cache:
     image: redis:latest
     restart: always
     ports:
       - '6379:6379'
+    networks:
+      - app-network
 
 networks:
   app-network:

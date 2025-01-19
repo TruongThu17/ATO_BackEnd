@@ -1,6 +1,7 @@
 
 
 using ATO_API.Config;
+using ATO_API.Extensions;
 using Data.ArmsContext;
 using Data.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -110,6 +111,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.ApplyMigrations();
 }
 app.UseSwagger();
 app.UseSwaggerUI();
