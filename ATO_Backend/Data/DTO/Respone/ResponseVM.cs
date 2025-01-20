@@ -11,4 +11,10 @@ namespace Data.DTO.Respone
         public bool? Status { get; set; }
         public string? Message { get; set; }
     }
+    public class ResponseVM_Email
+    {
+        public bool? Status { get; set; }
+        public string? Message { get; set; }
+        public string? toEmail { get; set; }
+    }
 }

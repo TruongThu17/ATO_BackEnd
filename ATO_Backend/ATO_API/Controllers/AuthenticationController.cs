@@ -1,12 +1,15 @@
-﻿using Data.DTO.Request;
+﻿using ATO_API.Helper;
+using Data.DTO.Request;
 using Data.DTO.Respone;
 using Data.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
+using Service.AccountSer;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -20,94 +23,90 @@ namespace ATO_API.Controllers
         private readonly UserManager<Account> _userManager;
         private readonly RoleManager<IdentityRole<Guid>> _roleManager;
         private readonly IConfiguration _configuration;
+        private readonly IAccountService _accountService;
+        private readonly IMemoryCache _cache;
+        private readonly TokenHelper _tokenHelper;
         public AuthenticationController(UserManager<Account> userManager,
             RoleManager<IdentityRole<Guid>> roleManager,
-            IConfiguration configuration
+            IConfiguration configuration,
+            IAccountService accountService,
+            IMemoryCache cache,
+            TokenHelper tokenHelper
             )
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _configuration = configuration;
+            _accountService = accountService;
+            _cache = cache;
+            _tokenHelper = tokenHelper;
         }
-        [HttpPost]
-        [Route("login")]
+        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO model)
         {
             try
             {
-                // Check user in the database
-                var user = await _userManager.Users
-                    .Where(u => u.UserName == model.username)
-                    .FirstOrDefaultAsync();
-
-                if (user == null)
-                {
-                    throw new Exception("Tài khoản của bạn không tồn tại!");
-                }
-
-                // Check user is active
-                if (!user.isAccountActive)
-                {
-                    throw new Exception("Tài khoản của bạn đã bị khóa!");
-                }
-
-                // Verify password if provided
-                if (!string.IsNullOrEmpty(model.password))
-                {
-                    if (!await _userManager.CheckPasswordAsync(user, model.password))
-                    {
-                        throw new Exception("Sai mật khẩu đăng nhập!");
-                    }
-                }
-                var userRoles = await _userManager.GetRolesAsync(user);
-                var role = userRoles.FirstOrDefault();
-                var authClaims = new List<Claim>
-                        {
-                            new Claim(ClaimTypes.Name, user.Fullname),
-                            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                        };
-
-                foreach (var userRole in userRoles)
-                {
-                    authClaims.Add(new Claim(ClaimTypes.Role, userRole));
-                }
-                if (!String.IsNullOrEmpty(user.AvatarURL))
-                {
-                    authClaims.Add(new Claim("AvatarUrl", user.AvatarURL));
-                }
-                var Bear = GetToken(authClaims);
-
-                ResponseLogin respone = new ResponseLogin();
-                respone.Bear = new JwtSecurityTokenHandler().WriteToken(Bear);
-                respone.Expiration = Bear.ValidTo;
-                respone.Role = role;
-                return Ok(respone);
+                var response = await _accountService.LoginAsync(model);
+                return Ok(response);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, new ResponseVM
                 {
                     Status = false,
-                    //Message = "Đã xảy ra lỗi trong quá trình xử lý"
                     Message = ex.Message,
                 });
             }
         }
-        private JwtSecurityToken GetToken(List<Claim> authClaims)
+        [HttpPost("forgot-password/send-otp")]
+        public async Task<IActionResult> ForgotPasswordSendOTP([FromBody] ForgotPassword_Request_DTO model)
         {
-            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
-            var expirationTimeUtc = DateTime.UtcNow.AddHours(72);
+            try
+            {
+                var result = await _accountService.ForgotPasswordSendOTPAsync(model.username);
+                return Ok(new ResponseVM_Email()
+                {
+                    Status = result.Status,
+                    Message = "Mã xác thực đã được gửi tới email của bạn!",
+                    toEmail= result.toEmail,
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ResponseVM { Status = false, Message = ex.Message });
+            }
+        }
+        [HttpPost("forgot-password/verify-OTP")]
+        public async Task<ActionResult<string>> VerifyOtpAsync(string email, string otp)
+        {
+            if (_cache.TryGetValue(email, out string storedOtp) && storedOtp == otp)
+            {
+                _cache.Remove(email);
 
-            var token = new JwtSecurityToken(
-                issuer: _configuration["JWT:ValidIssuer"],
-                audience: _configuration["JWT:ValidAudience"],
-                expires: DateTime.SpecifyKind(expirationTimeUtc, DateTimeKind.Utc),
-                claims: authClaims,
-                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-            );
+                var token = _tokenHelper.GenerateAccessToken(email);
 
-            return token;
+                return Ok(new { Token = token });
+            }
+
+            return StatusCode(401, new ResponseVM
+            {
+                Status = false,
+                Message = "Mã xác thực không hợp lệ!",
+            });
+        }
+        [Authorize("guest")]
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPassword_DTO model)
+        {
+            try
+            {
+                var result = await _accountService.ForgotPasswordAsync(model);
+                return Ok(result );
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ResponseVM { Status = false, Message = ex.Message });
+            }
         }
     }
 }

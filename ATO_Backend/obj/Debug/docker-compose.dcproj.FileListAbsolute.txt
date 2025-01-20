@@ -50,3 +50,8 @@ D:\Job\Thắng\clonebe\ATO_BackEnd\ATO_Backend\bin\Debug\Service.pdb
 D:\Job\Thắng\clonebe\ATO_BackEnd\ATO_Backend\obj\Debug\docker-compose.dcproj.AssemblyReference.cache
 D:\Job\Thắng\clonebe\ATO_BackEnd\ATO_Backend\obj\Debug\docker-compose.dcproj.CoreCompileInputs.cache
 D:\Job\Thắng\clonebe\ATO_BackEnd\ATO_Backend\obj\Debug\docker-compose.dcproj.CopyComplete
+D:\Job\Thắng\clonebe\ATO_BackEnd\ATO_Backend\bin\Debug\MimeKit.dll
+D:\Job\Thắng\clonebe\ATO_BackEnd\ATO_Backend\bin\Debug\MailKit.dll
+D:\Job\Thắng\clonebe\ATO_BackEnd\ATO_Backend\bin\Debug\BouncyCastle.Cryptography.dll
+D:\Job\Thắng\clonebe\ATO_BackEnd\ATO_Backend\bin\Debug\System.Security.Cryptography.Pkcs.dll
+D:\Job\Thắng\clonebe\ATO_BackEnd\ATO_Backend\bin\Debug\System.Formats.Asn1.dll

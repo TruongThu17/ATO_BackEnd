@@ -1,4 +1,6 @@
-﻿using Data.Models;
+﻿using Data.DTO.Request;
+using Data.DTO.Respone;
+using Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,5 +15,8 @@ namespace Service.AccountSer
         Task<Account> GetAccountByIdAsync(Guid accountId);
         Task AddAccountAsync(Account account);
         Task UpdateAccountAsync(Account account);
+        Task<ResponseLogin> LoginAsync(LoginDTO model);
+        Task<ResponseVM_Email> ForgotPasswordSendOTPAsync(string email);
+        Task<ResponseVM> ForgotPasswordAsync(ForgotPassword_DTO model);
     }
 }

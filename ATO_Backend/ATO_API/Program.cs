@@ -2,7 +2,9 @@
 
 using ATO_API.Config;
 using ATO_API.Extensions;
+using ATO_API.Helper;
 using Data.ArmsContext;
+using Data.DTO.Request;
 using Data.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -10,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Service.AccountSer;
+using Service.EmailSer;
 using Service.Repository;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -101,8 +104,15 @@ builder.Services.AddSwaggerGen(config =>
     //    }
     //});
 });
+builder.Services.AddMemoryCache();
+// token helper 
+builder.Services.AddSingleton<TokenHelper>();
+// account service
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IRepository<Account>, Repository<Account>>();
+// email service 
+builder.Services.Configure<EmailSetting>(configuration.GetSection("EmailSettings"));
+builder.Services.AddScoped<IEmailService, EmailService>();
 // app
 var app = builder.Build();
 

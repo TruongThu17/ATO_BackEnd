@@ -1,5 +1,15 @@
 name: dockercompose14811200894164250809
 services:
+  ato.cache:
+    image: redis:latest
+    networks:
+      app-network: null
+    ports:
+      - mode: ingress
+        target: 6379
+        published: "6379"
+        protocol: tcp
+    restart: always
   ato_api:
     build:
       context: D:\Job\Thắng\clonebe\ATO_BackEnd\ATO_Backend
@@ -11,6 +21,10 @@ services:
         com.microsoft.visual-studio.project-name: ATO_API
       target: base
     container_name: atoapi
+    depends_on:
+      atodatabase:
+        condition: service_started
+        required: true
     entrypoint:
       - tail
       - -f
@@ -30,7 +44,7 @@ services:
       com.microsoft.visualstudio.debuggee.program: dotnet
       com.microsoft.visualstudio.debuggee.workingdirectory: /app
     networks:
-      default: null
+      app-network: null
     ports:
       - mode: ingress
         target: 5000
@@ -111,13 +125,13 @@ services:
         read_only: true
         bind:
           create_host_path: true
-  database:
+  atodatabase:
     container_name: atodatabase
     environment:
       ACCEPT_EULA: "Y"
       MSSQL_DB: ATO_Database
       MSSQL_PID: Express
-      SA_PASSWORD: "123456"
+      SA_PASSWORD: ATO123456
     image: mcr.microsoft.com/mssql/server:2019-latest
     networks:
       app-network: null
@@ -126,19 +140,7 @@ services:
         target: 1433
         published: "1433"
         protocol: tcp
-  products.cache:
-    image: redis:latest
-    networks:
-      default: null
-    ports:
-      - mode: ingress
-        target: 6379
-        published: "6379"
-        protocol: tcp
-    restart: always
 networks:
   app-network:
     name: dockercompose14811200894164250809_app-network
     driver: bridge
-  default:
-    name: dockercompose14811200894164250809_default
