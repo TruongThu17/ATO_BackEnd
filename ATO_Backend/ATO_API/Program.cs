@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Service.AccountSer;
+using Service.BlogSer;
 using Service.EmailSer;
 using Service.Repository;
 using System.Text;
@@ -110,6 +111,9 @@ builder.Services.AddSingleton<TokenHelper>();
 // account service
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IRepository<Account>, Repository<Account>>();
+// blog service
+builder.Services.AddScoped<IBlogService, BlogService>();
+builder.Services.AddScoped<IRepository<Blog>, Repository<Blog>>();
 // email service 
 builder.Services.Configure<EmailSetting>(configuration.GetSection("EmailSettings"));
 builder.Services.AddScoped<IEmailService, EmailService>();

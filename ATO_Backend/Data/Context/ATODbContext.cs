@@ -40,8 +40,13 @@ namespace Data.ArmsContext
         /// <param name="modelBuilder"></param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            #region configuration
             modelBuilder.ApplyConfiguration(new AccountConfiguration());
-
+            modelBuilder.ApplyConfiguration(new BlogConfiguration());
+            modelBuilder.ApplyConfiguration(new TourCompanyConfiguration());
+            modelBuilder.ApplyConfiguration(new TouristFacilityConfiguration());
+            #endregion
+            #region config FK for generate account and role,...
             modelBuilder.Entity<IdentityUserLogin<Guid>>(entity =>
             {
                 entity.HasKey(e => new { e.UserId, e.LoginProvider, e.ProviderKey });
@@ -92,11 +97,22 @@ namespace Data.ArmsContext
                 .WithMany()
                 .HasForeignKey(rc => rc.RoleId)
                 .OnDelete(DeleteBehavior.Cascade);
+            #endregion
+
             // seeding data
+            #region seeding data
             new AccountSeeder(modelBuilder).Seed();
+            new BlogSeeder(modelBuilder).Seed();
+            new TourCompanySeeder(modelBuilder).Seed();
+            new TouristFacilitySeeder(modelBuilder).Seed();
+            #endregion
+
         }
         #region DbSet
         public DbSet<Account> Accounts { get; set; }
+        public DbSet<Blog> Blogs { get; set; }
+        public DbSet<TourCompany> TourCompanies { get; set; }
+        public DbSet<TouristFacility> TouristFacilities { get; set; }
         #endregion
     }
 

@@ -16,7 +16,7 @@ using System.Text;
 
 namespace ATO_API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     [ApiController]
     public class AuthenticationController : ControllerBase
     {

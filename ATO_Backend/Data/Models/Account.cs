@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,13 @@ namespace Data.Models
         public string? AvatarURL { get; set; }
         public DateTime? Dob { get; set; }
         public bool isAccountActive { get; set; }
+
+
+        // FK
+        public virtual ICollection<Blog> Blogs { get; set; }
+        // người dùng này nếu là tour company
+        public virtual TourCompany? TourCompany { get; set; }
+        public virtual TouristFacility? TouristFacility { get; set; }
 
     }
 }
