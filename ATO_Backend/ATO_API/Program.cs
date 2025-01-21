@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Service.AboutSer;
 using Service.AccountSer;
 using Service.BlogSer;
 using Service.EmailSer;
@@ -117,6 +118,9 @@ builder.Services.AddScoped<IRepository<Blog>, Repository<Blog>>();
 // email service 
 builder.Services.Configure<EmailSetting>(configuration.GetSection("EmailSettings"));
 builder.Services.AddScoped<IEmailService, EmailService>();
+// about
+builder.Services.AddScoped<IAboutService, AboutService>();
+builder.Services.AddScoped<IRepository<About>, Repository<About>>();
 // app
 var app = builder.Build();
 

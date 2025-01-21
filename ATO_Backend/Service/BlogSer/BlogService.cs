@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
+using Nest;
 using Service.EmailSer;
 using Service.PageResult;
 using Service.Repository;
@@ -17,9 +18,9 @@ namespace Service.BlogSer
 {
     public class BlogService : IBlogService
     {
-        private readonly IRepository<Blog> _blogRepository;
+        private readonly Service.Repository.IRepository<Blog> _blogRepository;
         public BlogService(
-           IRepository<Blog> blogRepository
+           Service.Repository.IRepository<Blog> blogRepository
         )
         {
             _blogRepository = blogRepository;
@@ -27,64 +28,96 @@ namespace Service.BlogSer
 
         public async Task<Blog> GetBlogDetails(Guid BlogId)
         {
-            return await _blogRepository.Query()
-                .Include(b => b.Account)
-                    .ThenInclude(a => a.TourCompany)
-                .Include(b => b.Account)
-                    .ThenInclude(a => a.TouristFacility)
-                .SingleOrDefaultAsync(b => b.BlogId== BlogId);
+            try
+            {
+                var blog = await _blogRepository.Query()
+                        .Include(b => b.Account)
+                            .ThenInclude(a => a.TourCompany)
+                        .Include(b => b.Account)
+                            .ThenInclude(a => a.TouristFacility)
+                        .SingleOrDefaultAsync(b => b.BlogId == BlogId);
+                if (blog==null)
+                {
+                    throw new Exception("Không tìm thấy bài viết!");
+                }
+                return blog;
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Đã xảy ra lỗi vui lòng thử lại sau!");
+            }
+
         }
 
         public async Task<List<Blog>> GetListBlogs()
         {
-            return await _blogRepository.Query()
-                .Include(b => b.Account)
-                    .ThenInclude(a => a.TourCompany)
-                .Include(b => b.Account)
-                    .ThenInclude(a => a.TouristFacility)
-                .Where(b=>b.BlogStatus == BlogStatus.Approval)
-                .ToListAsync();
+            try
+            {
+                return await _blogRepository.Query()
+                    .Include(b => b.Account)
+                        .ThenInclude(a => a.TourCompany)
+                    .Include(b => b.Account)
+                        .ThenInclude(a => a.TouristFacility)
+                    .Where(b => b.BlogStatus == BlogStatus.Approval)
+                    .ToListAsync();
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Đã xảy ra lỗi vui lòng thử lại sau!");
+            }
+
         }
         public async Task<PagedResult<Blog>> GetListBlogs(string? search, BlogType? blogtype, int page, int pageSize)
         {
-            var query = _blogRepository.Query()
-                .Include(b => b.Account)
-                    .ThenInclude(a => a.TourCompany)
-                .Include(b => b.Account)
-                    .ThenInclude(a => a.TouristFacility)
-                .Where(b => b.BlogStatus == BlogStatus.Approval);
-
-            if (!string.IsNullOrEmpty(search))
+            try
             {
-                string searchConvert = search.ToLower();
-                query = query.Where(b =>
-                    b.Title.ToLower().Contains(searchConvert) ||
-                    b.Description.ToLower().Contains(searchConvert) ||
-                    b.Content.ToLower().Contains(searchConvert)
-                );
+                var query = _blogRepository.Query()
+                                .Include(b => b.Account)
+                                    .ThenInclude(a => a.TourCompany)
+                                .Include(b => b.Account)
+                                    .ThenInclude(a => a.TouristFacility)
+                                .Where(b => b.BlogStatus == BlogStatus.Approval);
+
+                if (!string.IsNullOrEmpty(search))
+                {
+                    string searchConvert = search.ToLower();
+                    query = query.Where(b =>
+                        b.Title.ToLower().Contains(searchConvert) ||
+                        b.Description.ToLower().Contains(searchConvert) ||
+                        b.Content.ToLower().Contains(searchConvert)
+                    );
+                }
+
+                if (blogtype.HasValue)
+                {
+                    query = query.Where(b => b.BlogType == blogtype);
+                }
+
+                int totalItems = await query.CountAsync();
+
+                var blogs = await query
+                    .OrderByDescending(b => b.CreateDate)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+
+                return new PagedResult<Blog>
+                {
+                    Items = blogs,
+                    TotalItems = totalItems,
+                    CurrentPage = page,
+                    PageSize = pageSize,
+                    TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize)
+                };
             }
-
-            if (blogtype.HasValue)
+            catch (Exception)
             {
-                query = query.Where(b => b.BlogType == blogtype);
+
+                throw new Exception("Đã xảy ra lỗi vui lòng thử lại sau!");
             }
-
-            int totalItems = await query.CountAsync(); 
-
-            var blogs = await query
-                .OrderByDescending(b => b.CreateDate)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync(); 
-
-            return new PagedResult<Blog>
-            {
-                Items = blogs,
-                TotalItems = totalItems,
-                CurrentPage = page,
-                PageSize = pageSize,
-                TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize)
-            };
+            
         }
 
     }

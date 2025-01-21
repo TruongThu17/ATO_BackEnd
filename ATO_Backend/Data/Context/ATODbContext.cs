@@ -41,6 +41,7 @@ namespace Data.ArmsContext
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             #region configuration
+            modelBuilder.ApplyConfiguration(new AboutConfiguration());
             modelBuilder.ApplyConfiguration(new AccountConfiguration());
             modelBuilder.ApplyConfiguration(new BlogConfiguration());
             modelBuilder.ApplyConfiguration(new TourCompanyConfiguration());
@@ -102,6 +103,7 @@ namespace Data.ArmsContext
             // seeding data
             #region seeding data
             new AccountSeeder(modelBuilder).Seed();
+            new AboutSeeder(modelBuilder).Seed();
             new BlogSeeder(modelBuilder).Seed();
             new TourCompanySeeder(modelBuilder).Seed();
             new TouristFacilitySeeder(modelBuilder).Seed();
@@ -110,6 +112,7 @@ namespace Data.ArmsContext
         }
         #region DbSet
         public DbSet<Account> Accounts { get; set; }
+        public DbSet<About> Abouts { get; set; }
         public DbSet<Blog> Blogs { get; set; }
         public DbSet<TourCompany> TourCompanies { get; set; }
         public DbSet<TouristFacility> TouristFacilities { get; set; }

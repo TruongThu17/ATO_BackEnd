@@ -69,6 +69,16 @@ namespace Service.Repository
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task DeleteAsync(Guid id)
+        {
+            var entity = await GetByIdAsync(id);
+            if (entity != null)
+            {
+                _context.Set<T>().Remove(entity);
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 
 }
