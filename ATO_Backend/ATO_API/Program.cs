@@ -7,6 +7,7 @@ using Data.ArmsContext;
 using Data.DTO.Request;
 using Data.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -20,6 +21,11 @@ using System.Text;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo("/var/data/dataprotection-keys"));
+
+
 ConfigurationManager configuration = builder.Configuration;
 // Add services to the container.
 builder.Services.AddDbContext<ATODbContext>(options => options.UseSqlServer(
@@ -121,20 +127,20 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 // about
 builder.Services.AddScoped<IAboutService, AboutService>();
 builder.Services.AddScoped<IRepository<About>, Repository<About>>();
+
+
 // app
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
     app.ApplyMigrations();
 }
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseHttpsRedirection();
-app.UseCors("AllowHttpOrigins");
+app.UseCors("AllowAllOrigins");
 // Authentication & Authorization
 app.UseAuthentication();
 app.UseAuthorization();

@@ -34,7 +34,7 @@ namespace Data.Seeding
                     EmailCompany = "vtv.cholon@vietravel.com",
                     Website = "https://travel.com.vn/",
                     LogoURL = "https://firebasestorage.googleapis.com/v0/b/ato-c80b3.firebasestorage.app/o/Logo%2F1.png?alt=media&token=6c69e085-dfc9-4d14-8f73-ecbcbc7d3fcb", 
-                    CreateDate = DateTime.Now
+                    CreateDate = new DateTime(2025, 1, 22, 3, 38, 59, 419, DateTimeKind.Local).AddTicks(3253)
                 }
             );
         }

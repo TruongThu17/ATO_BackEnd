@@ -27,8 +27,16 @@ namespace Service.AboutSer
         }
         public async Task<About> GetAbout()
         {
-            return await _aboutRepository.Query()
+            try
+            {
+                return await _aboutRepository.Query()
                 .FirstOrDefaultAsync();
+            }
+            catch (Exception)
+            {
+                throw new Exception("Đã xảy ra lỗi vui lòng thử lại sau!");
+            }
+            
         }
     }
 }

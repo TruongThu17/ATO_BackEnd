@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Data.DTO.Respone;
 using Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Nest;
@@ -31,7 +32,11 @@ namespace ATO_API.Controllers
             }
             catch (System.Exception ex)
             {
-                return StatusCode(500, new { message = "An error occurred while fetching about data", error = ex.Message });
+                return StatusCode(500, new ResponseVM
+                {
+                    Status = false,
+                    Message = ex.Message,
+                });
             }
         }
     }

@@ -35,7 +35,7 @@ IMPLEMENT_OLECREATE(<<class>>, <<external_name>>,
                     Address = "Số 117 đường Hoàng Quốc Việt – TTNT Mộc Châu ( Ngã tư Vườn Đào )",
                     Description = "Là công ty trẻ tại Mộc Châu, tiên phong cung cấp những dịch vụ du lịch gắn liền với thiên nhiên, văn hóa các dân tộc Mộc Châu, Vân Hồ.\r\nHiện đang khai thác những tour du lịch khám phá nông nghiệp Mộc Châu, khám phá văn hóa đời sống các dân tộc và các chương trình du lịch thiện nguyện, cắm trại, teambuilding, thể thao, MICE…",
                     ContactInfor = "0946 166 538",
-                    CreateDate = DateTime.Now,
+                    CreateDate = new DateTime(2025, 1, 22, 3, 38, 59, 419, DateTimeKind.Local).AddTicks(3253),
                     Website = "www.mocchaumoc.com",
                     LogoURL ="",
                     EmailTouristFacility = " dulichmocchaumoc@gmail.com"

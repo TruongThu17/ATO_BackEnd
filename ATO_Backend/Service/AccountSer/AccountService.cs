@@ -69,7 +69,7 @@ namespace Service.AccountSer
             {
                 // Tìm user trong hệ thống
                 var user = await _userManager.Users
-                    .Where(u => u.UserName == model.username)
+                    .Where(u => u.UserName == model.Username)
                     .FirstOrDefaultAsync();
 
                 // Kiểm tra nếu user không tồn tại
@@ -85,8 +85,8 @@ namespace Service.AccountSer
                 }
 
                 // Kiểm tra mật khẩu
-                if (!string.IsNullOrEmpty(model.password) &&
-                    !await _userManager.CheckPasswordAsync(user, model.password))
+                if (!string.IsNullOrEmpty(model.Password) &&
+                    !await _userManager.CheckPasswordAsync(user, model.Password))
                 {
                     throw new Exception("Sai mật khẩu đăng nhập!");
                 }
@@ -125,7 +125,7 @@ namespace Service.AccountSer
             }
             catch (Exception ex)
             {
-                throw new Exception("Server gặp lỗi, vui lòng thử lại sau!");
+                throw new Exception("Đã sảy ra lỗi, vui lòng thử lại sau!");
             }
         }
         //hàm gen token
@@ -170,9 +170,9 @@ namespace Service.AccountSer
             }
             catch (Exception)
             {
-                throw new Exception("Lỗi trong quá trình xử lý yêu cầu! Vui lòng thử lại sau!");
-            }
+                throw new Exception("Đã sảy ra lỗi, vui lòng thử lại sau!");
 
+            }
         }
         // thay đổi mật khẩu khi đã xác thực thành công 
         public async Task<ResponseVM> ForgotPasswordAsync(ForgotPassword_DTO model)
@@ -213,7 +213,6 @@ namespace Service.AccountSer
             }
             catch (Exception ex)
             {
-                //throw new Exception(ex.Message);
                 throw new Exception("Đặt lại mật khẩu không thành công!");
             }
         }

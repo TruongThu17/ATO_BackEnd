@@ -14,7 +14,6 @@ D:\Job\Thắng\clonebe\ATO_BackEnd\ATO_Backend\ATO_API\obj\Debug\net8.0\ATO_API.
 D:\Job\Thắng\clonebe\ATO_BackEnd\ATO_Backend\ATO_API\obj\Debug\net8.0\ATO_API.AssemblyInfoInputs.cache
 D:\Job\Thắng\clonebe\ATO_BackEnd\ATO_Backend\ATO_API\obj\Debug\net8.0\ATO_API.AssemblyInfo.cs
 D:\Job\Thắng\clonebe\ATO_BackEnd\ATO_Backend\ATO_API\obj\Debug\net8.0\ATO_API.csproj.CoreCompileInputs.cache
-D:\Job\Thắng\clonebe\ATO_BackEnd\ATO_Backend\ATO_API\obj\Debug\net8.0\ATO_API.MvcApplicationPartsAssemblyInfo.cs
 D:\Job\Thắng\clonebe\ATO_BackEnd\ATO_Backend\ATO_API\obj\Debug\net8.0\ATO_API.MvcApplicationPartsAssemblyInfo.cache
 D:\Job\Thắng\clonebe\ATO_BackEnd\ATO_Backend\ATO_API\obj\Debug\net8.0\ATO_API.sourcelink.json
 D:\Job\Thắng\clonebe\ATO_BackEnd\ATO_Backend\ATO_API\obj\Debug\net8.0\staticwebassets.build.json
