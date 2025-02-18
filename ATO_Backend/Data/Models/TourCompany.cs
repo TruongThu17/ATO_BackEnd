@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Data.Models
 {
+    // công ty bán tour du lịch
     public class TourCompany
     {
         public Guid TourCompanyId { get; set; }

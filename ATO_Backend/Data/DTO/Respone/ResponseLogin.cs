@@ -8,8 +8,10 @@ namespace Data.DTO.Respone
 {
     public class ResponseLogin
     {
-        public string Bear { get; set; }
-        public DateTime Expiration { get; set; }
+        public string? Bear { get; set; }
+        public DateTime? Expiration { get; set; }
         public string? Role { get; set; }
+        public string? ErrorMessage { get; set; }
+
     }
 }

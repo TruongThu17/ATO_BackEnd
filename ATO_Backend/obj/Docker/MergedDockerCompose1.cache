@@ -58,16 +58,20 @@ services:
     volumes:
       - type: bind
         source: C:\Users\-ASUS-\AppData\Roaming/Microsoft/UserSecrets
-        target: /home/app/.microsoft/usersecrets
+        target: /root/.microsoft/usersecrets
         read_only: true
         bind:
           create_host_path: true
       - type: bind
         source: C:\Users\-ASUS-\AppData\Roaming/ASP.NET/Https
-        target: /home/app/.aspnet/https
+        target: /root/.aspnet/https
         read_only: true
         bind:
           create_host_path: true
+      - type: volume
+        source: dataprotection-keys
+        target: /root/.aspnet/DataProtection-Keys
+        volume: {}
       - type: bind
         source: D:\Job\Thắng\clonebe\ATO_BackEnd\ATO_Backend\ATO_API
         target: /app
@@ -97,13 +101,13 @@ services:
           create_host_path: true
       - type: bind
         source: C:\Users\-ASUS-\AppData\Roaming/ASP.NET/Https
-        target: /root/.aspnet/https
+        target: /home/app/.aspnet/https
         read_only: true
         bind:
           create_host_path: true
       - type: bind
         source: C:\Users\-ASUS-\AppData\Roaming/Microsoft/UserSecrets
-        target: /root/.microsoft/usersecrets
+        target: /home/app/.microsoft/usersecrets
         read_only: true
         bind:
           create_host_path: true
@@ -145,3 +149,7 @@ networks:
   app-network:
     name: dockercompose14811200894164250809_app-network
     driver: bridge
+volumes:
+  dataprotection-keys:
+    name: dockercompose14811200894164250809_dataprotection-keys
+    driver: local

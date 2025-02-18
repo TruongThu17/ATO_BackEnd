@@ -47,17 +47,24 @@ namespace ATO_API.Controllers
             try
             {
                 var response = await _accountService.LoginAsync(model);
+
+                if (!string.IsNullOrEmpty(response.ErrorMessage))
+                {
+                    return BadRequest(new ResponseVM
+                    {
+                        Status = false,
+                        Message = response.ErrorMessage
+                    });
+                }
+
                 return Ok(response);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return StatusCode(500, new ResponseVM
-                {
-                    Status = false,
-                    Message = ex.Message,
-                });
+                return StatusCode(500, new ResponseVM { Status = false, Message = "Đã sảy ra lỗi, vui lòng thử lại sau!" });
             }
         }
+
         [HttpPost("forgot-password/send-otp")]
         public async Task<IActionResult> ForgotPasswordSendOTP([FromBody] ForgotPassword_Request_DTO model)
         {

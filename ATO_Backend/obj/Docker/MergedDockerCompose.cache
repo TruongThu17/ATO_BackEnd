@@ -39,15 +39,20 @@ services:
     volumes:
       - type: bind
         source: C:\Users\-ASUS-\AppData\Roaming/Microsoft/UserSecrets
-        target: /home/app/.microsoft/usersecrets
+        target: /root/.microsoft/usersecrets
         read_only: true
         bind:
           create_host_path: true
       - type: bind
         source: C:\Users\-ASUS-\AppData\Roaming/ASP.NET/Https
-        target: /home/app/.aspnet/https
+        target: /root/.aspnet/https
+        read_only: true
         bind:
           create_host_path: true
+      - type: volume
+        source: dataprotection-keys
+        target: /root/.aspnet/DataProtection-Keys
+        volume: {}
   atodatabase:
     container_name: atodatabase
     environment:
@@ -68,3 +73,7 @@ networks:
   app-network:
     name: dockercompose14811200894164250809_app-network
     driver: bridge
+volumes:
+  dataprotection-keys:
+    name: dockercompose14811200894164250809_dataprotection-keys
+    driver: local

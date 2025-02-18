@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Data.Models
 {
+    // Đơn vị cung cấp du lịch nông nghiệp
     public class TouristFacility
     {
         public Guid TouristFacilityId { get; set; }
@@ -20,6 +21,9 @@ namespace Data.Models
         public DateTime CreateDate { get; set; }
         public DateTime? UpdateTime { get; set; }
         //FK
-        public virtual Account Account { get; set; }
+        public virtual Account? Account { get; set; }
+        public virtual ICollection<Product>? Products { get; set; }
+        public virtual ICollection<Certification>? Certifications { get; set; }
+        public virtual ICollection<UserSupport>? UserSupports { get; set; }
     }
 }

@@ -65,69 +65,59 @@ namespace Service.AccountSer
         // hàm đăng nhập
         public async Task<ResponseLogin> LoginAsync(LoginDTO model)
         {
-            try
+            if (string.IsNullOrWhiteSpace(model.Username) || string.IsNullOrWhiteSpace(model.Password))
             {
-                // Tìm user trong hệ thống
-                var user = await _userManager.Users
-                    .Where(u => u.UserName == model.Username)
-                    .FirstOrDefaultAsync();
+                return new ResponseLogin { ErrorMessage = "Tên đăng nhập và mật khẩu không được để trống!" };
+            }
 
-                // Kiểm tra nếu user không tồn tại
-                if (user == null)
+            var user = await _userManager.Users
+                .SingleOrDefaultAsync(u => u.UserName == model.Username);
+
+            if (user == null)
+            {
+                return new ResponseLogin { ErrorMessage = "Tài khoản không tồn tại!" };
+            }
+
+            if (!user.isAccountActive)
+            {
+                return new ResponseLogin { ErrorMessage = "Tài khoản của bạn đã bị khóa!" };
+            }
+
+            if (!await _userManager.CheckPasswordAsync(user, model.Password))
+            {
+                return new ResponseLogin { ErrorMessage = "Sai mật khẩu đăng nhập!" };
+            }
+
+            var userRoles = await _userManager.GetRolesAsync(user);
+            var role = userRoles.FirstOrDefault();
+
+            var authClaims = new List<Claim>
                 {
-                    throw new Exception("Tài khoản của bạn không tồn tại!");
-                }
-
-                // Kiểm tra nếu tài khoản bị khóa
-                if (!user.isAccountActive)
-                {
-                    throw new Exception("Tài khoản của bạn đã bị khóa!");
-                }
-
-                // Kiểm tra mật khẩu
-                if (!string.IsNullOrEmpty(model.Password) &&
-                    !await _userManager.CheckPasswordAsync(user, model.Password))
-                {
-                    throw new Exception("Sai mật khẩu đăng nhập!");
-                }
-
-                // Lấy thông tin vai trò của người dùng
-                var userRoles = await _userManager.GetRolesAsync(user);
-                var role = userRoles.FirstOrDefault();
-
-                // Tạo danh sách claims cho người dùng
-                var authClaims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, user.Fullname),
+                    new Claim(ClaimTypes.Name, user.Fullname ?? ""),
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 };
 
-                foreach (var userRole in userRoles)
-                {
-                    authClaims.Add(new Claim(ClaimTypes.Role, userRole));
-                }
-                if (!string.IsNullOrEmpty(user.AvatarURL))
-                {
-                    authClaims.Add(new Claim("AvatarUrl", user.AvatarURL));
-                }
-
-                // Tạo token
-                var Bear = GenerateToken(authClaims);
-
-                // Trả về kết quả
-                return new ResponseLogin
-                {
-                    Bear = new JwtSecurityTokenHandler().WriteToken(Bear),
-                    Expiration = Bear.ValidTo,
-                    Role = role
-                };
-            }
-            catch (Exception ex)
+            foreach (var userRole in userRoles)
             {
-                throw new Exception("Đã sảy ra lỗi, vui lòng thử lại sau!");
+                authClaims.Add(new Claim(ClaimTypes.Role, userRole));
             }
+
+            if (!string.IsNullOrEmpty(user.AvatarURL))
+            {
+                authClaims.Add(new Claim("AvatarUrl", user.AvatarURL));
+            }
+
+            var token = GenerateToken(authClaims);
+
+            return new ResponseLogin
+            {
+                Bear = new JwtSecurityTokenHandler().WriteToken(token),
+                Expiration = token.ValidTo,
+                Role = role
+            };
         }
+
         //hàm gen token
 
         private JwtSecurityToken GenerateToken(List<Claim> authClaims)
@@ -151,7 +141,11 @@ namespace Service.AccountSer
                 var user = await _userManager.FindByNameAsync(username);
                 if (user == null)
                 {
-                    throw new Exception("Không tìm thấy tài khoản người dùng nào trùng với tên đăng nhập " + username + "!");
+                    return new ResponseVM_Email()
+                    {
+                        Message = "Không tìm thấy tài khoản người dùng nào trùng với tên đăng nhập " + username + "!",
+                        Status = false
+                    };
                 }
                 var otp = new Random().Next(100000, 999999).ToString();
                 EmailRequest emailRequest = new EmailRequest();
@@ -170,8 +164,11 @@ namespace Service.AccountSer
             }
             catch (Exception)
             {
-                throw new Exception("Đã sảy ra lỗi, vui lòng thử lại sau!");
-
+                return new ResponseVM_Email()
+                {
+                    Message = "Đã sảy ra lỗi, vui lòng thử lại sau!",
+                    Status = false
+                };
             }
         }
         // thay đổi mật khẩu khi đã xác thực thành công 

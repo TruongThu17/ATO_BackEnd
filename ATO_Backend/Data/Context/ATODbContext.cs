@@ -46,6 +46,10 @@ namespace Data.ArmsContext
             modelBuilder.ApplyConfiguration(new BlogConfiguration());
             modelBuilder.ApplyConfiguration(new TourCompanyConfiguration());
             modelBuilder.ApplyConfiguration(new TouristFacilityConfiguration());
+            modelBuilder.ApplyConfiguration(new ProductConfiguration());
+            modelBuilder.ApplyConfiguration(new CertificationConfiguration());
+            modelBuilder.ApplyConfiguration(new UserIssueConfiguration());
+            modelBuilder.ApplyConfiguration(new UserSupportConfiguration());
             #endregion
             #region config FK for generate account and role,...
             modelBuilder.Entity<IdentityUserLogin<Guid>>(entity =>
@@ -116,6 +120,10 @@ namespace Data.ArmsContext
         public DbSet<Blog> Blogs { get; set; }
         public DbSet<TourCompany> TourCompanies { get; set; }
         public DbSet<TouristFacility> TouristFacilities { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Certification> Certifications { get; set; }
+        public DbSet<UserSupport> UserSupports { get; set; }
+        public DbSet<UserIssue> UserIssues { get; set; }
         #endregion
     }
 
