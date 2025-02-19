@@ -36,10 +36,6 @@ namespace Service.BlogSer
                         .Include(b => b.Account)
                             .ThenInclude(a => a.TouristFacility)
                         .SingleOrDefaultAsync(b => b.BlogId == BlogId);
-                if (blog==null)
-                {
-                    throw new Exception("Không tìm thấy bài viết!");
-                }
                 return blog;
             }
             catch (Exception)

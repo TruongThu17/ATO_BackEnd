@@ -28,10 +28,10 @@ namespace ATO_API.Controllers
         }
         [HttpGet("get-blogs")]
         public async Task<IActionResult> GetBlogs(
-            [FromQuery] string? search,    
-            [FromQuery] BlogType? blogtype,  
-            [FromQuery] int page = 1,   
-            [FromQuery] int pageSize = 8  
+            [FromQuery] string? search,
+            [FromQuery] BlogType? blogtype,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 8
         )
         {
             try
@@ -64,6 +64,14 @@ namespace ATO_API.Controllers
             try
             {
                 var response = await _blogService.GetBlogDetails(blogId);
+                if (response == null)
+                {
+                    return StatusCode(400, new ResponseVM
+                    {
+                        Status = false,
+                        Message = "Không tìm thấy bài viết",
+                    });
+                }
                 Blog_Guest_DTO responseResult = _mapper.Map<Blog_Guest_DTO>(response);
                 return Ok(responseResult);
             }

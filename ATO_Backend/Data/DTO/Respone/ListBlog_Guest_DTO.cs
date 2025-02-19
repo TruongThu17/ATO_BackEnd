@@ -18,7 +18,7 @@ namespace Data.DTO.Respone
         public Guid? TouristFacilityId { get; set; }
         public BlogType BlogType { get; set; }
         public DateTime CreateDate { get; set; }
-        public string DescriptionAPI { get; set; } = "BlogType( 0-Sự kiện, 1-Tin Tức )";
+        public string DescriptionAPI { get; set; } = "BlogType( 0-Sự kiện, 1-Tin tức )";
     }
     public class Blog_Guest_DTO
     {
@@ -32,6 +32,6 @@ namespace Data.DTO.Respone
         public Guid? TouristFacilityId { get; set; }
         public BlogType BlogType { get; set; }
         public DateTime CreateDate { get; set; }
-        public string DescriptionAPI { get; set; } = "BlogType( 0-Sự kiện, 1-Tin Tức )";
+        public string DescriptionAPI { get; set; } = "BlogType( 0-Sự kiện, 1-Tin tức )";
     }
 }

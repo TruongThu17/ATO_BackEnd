@@ -18,18 +18,18 @@ namespace Data.Configurations
             builder.Property(x => x.IssueType).IsRequired();
             builder.Property(x => x.SupportMessage).IsRequired();
             builder.Property(x => x.RequestDate).IsRequired();
-            //builder.Property(x => x.ResponeBy).IsRequired();
             builder.Property(x => x.IsResolved).IsRequired();
+            builder.Property(x => x.Fullname).IsRequired();
+            builder.Property(x => x.Email).IsRequired();
 
+            builder.Property(x => x.ResponeBy).IsRequired(false);
             builder.Property(x => x.ResponseDate).IsRequired(false);
+            builder.Property(x => x.ResponseMessage).IsRequired(false);
             builder.Property(x => x.UpdatedDate).IsRequired(false);
             #region config relation
-            builder.HasOne(x => x.Account)
-               .WithMany(c => c.RequestSupports)
-               .HasForeignKey(x => x.AccoutId);
-            //builder.HasOne(x => x.Account)
-            //   .WithMany(c => c.RequestSupports)
-            //   .HasForeignKey(x => x.ResponeBy);
+            builder.HasOne(x => x.ResponeAccount)
+               .WithMany(c => c.UserSupports)
+               .HasForeignKey(x => x.ResponeBy);
             #endregion
         }
     }

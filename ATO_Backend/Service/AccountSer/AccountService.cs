@@ -136,82 +136,82 @@ namespace Service.AccountSer
         // hàm gửi mã xác thực tài khoản để thay đổi mật khẩu
         public async Task<ResponseVM_Email> ForgotPasswordSendOTPAsync(string username)
         {
-            try
-            {
-                var user = await _userManager.FindByNameAsync(username);
-                if (user == null)
-                {
-                    return new ResponseVM_Email()
-                    {
-                        Message = "Không tìm thấy tài khoản người dùng nào trùng với tên đăng nhập " + username + "!",
-                        Status = false
-                    };
-                }
-                var otp = new Random().Next(100000, 999999).ToString();
-                EmailRequest emailRequest = new EmailRequest();
-                emailRequest.ToEmail = user.Email;
-                emailRequest.Subject = "Mã Xác thực tài khoản người dùng";
-                emailRequest.Body = $"Mã xác thực tài khoản của bạn là: {otp}";
-                _cache.Set(emailRequest.ToEmail, otp, _otpLifetime);
-                await _emailService.SendEmailAsync(emailRequest);
-
-                return new ResponseVM_Email()
-                {
-                    Message = "Mã xác thực đã được gửi đến email của bạn!",
-                    Status = true,
-                    toEmail = user.Email,
-                };
-            }
-            catch (Exception)
+            var user = await _userManager.FindByNameAsync(username);
+            if (user == null)
             {
                 return new ResponseVM_Email()
                 {
-                    Message = "Đã sảy ra lỗi, vui lòng thử lại sau!",
+                    Message = "Không tìm thấy tài khoản người dùng nào trùng với tên đăng nhập " + username + "!",
                     Status = false
                 };
             }
+            var otp = new Random().Next(100000, 999999).ToString();
+            EmailRequest emailRequest = new EmailRequest();
+            emailRequest.ToEmail = user.Email;
+            emailRequest.Subject = "Mã Xác thực tài khoản người dùng";
+            emailRequest.Body = $"Mã xác thực tài khoản của bạn là: {otp}";
+            _cache.Set(emailRequest.ToEmail, otp, _otpLifetime);
+            await _emailService.SendEmailAsync(emailRequest);
+
+            return new ResponseVM_Email()
+            {
+                Message = "Mã xác thực đã được gửi đến email của bạn!",
+                Status = true,
+                toEmail = user.Email,
+            };
         }
         // thay đổi mật khẩu khi đã xác thực thành công 
         public async Task<ResponseVM> ForgotPasswordAsync(ForgotPassword_DTO model)
         {
-            try
+            var user = await _userManager.FindByNameAsync(model.username);
+            if (user == null)
             {
-                var user = await _userManager.FindByNameAsync(model.username);
-                if (user == null)
-                {
-                    throw new Exception("Không tìm thấy tài khoản!");
-                }
-                if (!model.NewPassword.Equals(model.ConfimPassword))
-                {
-                    throw new Exception("Mã xác nhận không chính xác!");
-                }
-                if (!IsValidPassword(model.NewPassword))
-                {
-                    throw new Exception("Mật khẩu mới phải chứa ít nhất một ký tự in hoa, một ký tự thường, một số và một ký tự đặc biệt.");
-                }
-
-                var resetPasswordResult = await _userManager.RemovePasswordAsync(user);
-                if (!resetPasswordResult.Succeeded)
-                {
-                    throw new Exception("Đã xảy ra lỗi, vui lòng thử lại sau!");
-                }
-                var user2 = await _userManager.FindByNameAsync(model.username);
-                var result = await _userManager.AddPasswordAsync(user, model.NewPassword);
-                if (!result.Succeeded)
-                {
-                    throw new Exception("Đặt lại mật khẩu không thành công!");
-                }
-
                 return new ResponseVM
                 {
-                    Status = true,
-                    Message = "Đổi mật khẩu thành công!"
+                    Status = false,
+                    Message = "Không tìm thấy tài khoản!"
                 };
             }
-            catch (Exception ex)
+            else if (!model.NewPassword.Equals(model.ConfimPassword))
             {
-                throw new Exception("Đặt lại mật khẩu không thành công!");
+                return new ResponseVM
+                {
+                    Status = false,
+                    Message = "Mã xác nhận không chính xác!"
+                };
             }
+            else if (!IsValidPassword(model.NewPassword))
+            {
+                return new ResponseVM
+                {
+                    Status = false,
+                    Message = "Mật khẩu mới phải chứa ít nhất một ký tự in hoa, một ký tự thường, một số và một ký tự đặc biệt."
+                };
+            }
+
+            var resetPasswordResult = await _userManager.RemovePasswordAsync(user);
+            if (!resetPasswordResult.Succeeded)
+            {
+                return new ResponseVM
+                {
+                    Status = false,
+                    Message = "Đã xảy ra lỗi, vui lòng thử lại sau!"
+                };
+            }
+            var result = await _userManager.AddPasswordAsync(user, model.NewPassword);
+            if (!result.Succeeded)
+            {
+                return new ResponseVM
+                {
+                    Status = false,
+                    Message = "Đặt lại mật khẩu không thành công!"
+                };
+            }
+            return new ResponseVM
+            {
+                Status = true,
+                Message = "Đổi mật khẩu thành công!"
+            };
         }
         // Phương thức kiểm tra mật khẩu mới
         private bool IsValidPassword(string password)

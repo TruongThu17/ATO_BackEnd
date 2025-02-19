@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ATO_API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9517632df7fcfe2c9ec35c2a158956afc7759b38")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1b735912aa309205742a1f7bacb359467133fac0")]
 [assembly: System.Reflection.AssemblyProductAttribute("ATO_API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ATO_API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -18,11 +18,10 @@ namespace Data.Models
 
 
         // FK
-        public virtual ICollection<Blog> Blogs { get; set; }
+        public virtual ICollection<Blog>? Blogs { get; set; }
         // người dùng này nếu là tour company
         public virtual TourCompany? TourCompany { get; set; }
         public virtual TouristFacility? TouristFacility { get; set; }
-        //public virtual ICollection<UserSupport> UserSupports { get; set; }
-        public virtual ICollection<UserSupport> RequestSupports { get; set; }
+        public virtual ICollection<UserSupport>? UserSupports { get; set; }
     }
 }

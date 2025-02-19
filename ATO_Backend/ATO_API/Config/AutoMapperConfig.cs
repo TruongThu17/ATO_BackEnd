@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Data.DTO.Request;
 using Data.DTO.Respone;
 using Data.Models;
 using System.ComponentModel;
@@ -12,6 +13,7 @@ namespace ATO_API.Config
         {
             var mapperConfig = new MapperConfiguration(config =>
             {
+                // blog mapper
                 config.CreateMap<Blog, ListBlog_Guest_DTO>()
                 .ForMember(dest => dest.TouristFacilityId, opt => opt.MapFrom(src => src.Account.TouristFacility.TouristFacilityId))
                 .ForMember(dest => dest.TourCompanyId, opt => opt.MapFrom(src => src.Account.TourCompany.TourCompanyId))
@@ -26,6 +28,8 @@ namespace ATO_API.Config
                     src.Account.TourCompany != null ? src.Account.TourCompany.CompanynName :
                     src.Account.TouristFacility != null ? src.Account.TouristFacility.TouristFacilityName : "Hệ thống ATOS"
                 ));
+                // user support
+                config.CreateMap<CreateUserSupportRequest, UserSupport>();
             });
 
             return mapperConfig.CreateMapper();

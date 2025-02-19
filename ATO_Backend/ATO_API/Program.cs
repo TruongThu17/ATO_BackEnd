@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Service.AboutSer;
@@ -17,6 +18,7 @@ using Service.AccountSer;
 using Service.BlogSer;
 using Service.EmailSer;
 using Service.Repository;
+using Service.UserSupportSer;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -93,24 +95,6 @@ builder.Services.AddSwaggerGen(config =>
         Type = SecuritySchemeType.ApiKey,
         Scheme = "Bearer"
     });
-
-    //config.AddSecurityRequirement(new OpenApiSecurityRequirement()
-    //{
-    //    {
-    //        new OpenApiSecurityScheme
-    //        {
-    //            Reference = new OpenApiReference
-    //            {
-    //                Type = ReferenceType.SecurityScheme,
-    //                Id = "Bearer"
-    //            },
-    //            Scheme = "oauth2",
-    //            Name = "Bearer",
-    //            In = ParameterLocation.Header,
-    //        },
-    //        new List<string>()
-    //    }
-    //});
 });
 builder.Services.AddMemoryCache();
 // token helper 
@@ -127,7 +111,9 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 // about
 builder.Services.AddScoped<IAboutService, AboutService>();
 builder.Services.AddScoped<IRepository<About>, Repository<About>>();
-
+// user support
+builder.Services.AddScoped<IUserSupportService, UserSupportService>();
+builder.Services.AddScoped<IRepository<UserSupport>, Repository<UserSupport>>();
 
 // app
 var app = builder.Build();

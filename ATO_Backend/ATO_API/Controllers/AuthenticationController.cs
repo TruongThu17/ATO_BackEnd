@@ -1,4 +1,5 @@
 ﻿using ATO_API.Helper;
+using Azure;
 using Data.DTO.Request;
 using Data.DTO.Respone;
 using Data.Models;
@@ -71,35 +72,52 @@ namespace ATO_API.Controllers
             try
             {
                 var result = await _accountService.ForgotPasswordSendOTPAsync(model.username);
+                if (result.Status==false)
+                {
+                    return BadRequest(new ResponseVM_Email
+                    {
+                        Status = result.Status,
+                        Message = result.Message,
+                        toEmail = result.toEmail,
+                    });
+                }
                 return Ok(new ResponseVM_Email()
                 {
                     Status = result.Status,
-                    Message = "Mã xác thực đã được gửi tới email của bạn!",
+                    Message = result.Message,
                     toEmail= result.toEmail,
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return StatusCode(500, new ResponseVM { Status = false, Message = ex.Message });
+                return StatusCode(500, new ResponseVM { Status = false, Message = "Đã sảy ra lỗi, vui lòng thử lại sau!" });
             }
         }
         [HttpPost("forgot-password/verify-OTP")]
         public async Task<ActionResult<string>> VerifyOtpAsync(string email, string otp)
         {
-            if (_cache.TryGetValue(email, out string storedOtp) && storedOtp == otp)
+            try
             {
-                _cache.Remove(email);
+                if (_cache.TryGetValue(email, out string storedOtp) && storedOtp == otp)
+                {
+                    _cache.Remove(email);
 
-                var token = _tokenHelper.GenerateAccessToken(email);
+                    var token = _tokenHelper.GenerateAccessToken(email);
 
-                return Ok(new { Token = token });
+                    return Ok(new { Token = token });
+                }
+
+                return StatusCode(401, new ResponseVM
+                {
+                    Status = false,
+                    Message = "Mã xác thực không hợp lệ!",
+                });
             }
-
-            return StatusCode(401, new ResponseVM
+            catch (Exception)
             {
-                Status = false,
-                Message = "Mã xác thực không hợp lệ!",
-            });
+                return StatusCode(500, new ResponseVM { Status = false, Message = "Đã sảy ra lỗi, vui lòng thử lại sau!" });
+            }
+           
         }
         [Authorize("guest")]
         [HttpPost("forgot-password")]
@@ -108,11 +126,19 @@ namespace ATO_API.Controllers
             try
             {
                 var result = await _accountService.ForgotPasswordAsync(model);
+                if (result.Status == false)
+                {
+                    return BadRequest(new ResponseVM
+                    {
+                        Status = result.Status,
+                        Message = result.Message,
+                    });
+                }
                 return Ok(result );
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return StatusCode(500, new ResponseVM { Status = false, Message = ex.Message });
+                return StatusCode(500, new ResponseVM { Status = false, Message = "Đã sảy ra lỗi, vui lòng thử lại sau!" });
             }
         }
     }

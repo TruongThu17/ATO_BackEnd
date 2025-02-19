@@ -32,7 +32,7 @@ namespace Data.Models
         public DateTime? UpdateTime { get; set; }
 
         // FK
-        public virtual Account Account { get; set; }
+        public virtual Account? Account { get; set; }
     }
     public enum BlogType
     {
