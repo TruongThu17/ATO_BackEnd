@@ -49,6 +49,5 @@ namespace Data.Models
         DataUpdateRequest,
         [Description("Khác")]
         Other
-
     }
 }

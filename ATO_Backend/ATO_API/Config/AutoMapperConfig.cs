@@ -29,10 +29,20 @@ namespace ATO_API.Config
                     src.Account.TouristFacility != null ? src.Account.TouristFacility.TouristFacilityName : "Hệ thống ATOS"
                 ));
                 // user support
-                config.CreateMap<CreateUserSupportRequest, UserSupport>();
+                config.CreateMap<UserSupportRequest, UserSupport>();
+                config.CreateMap<UserSupport, UserSupportDetails>()
+                .ForMember(dest => dest.ResponeBy, opt => opt.MapFrom(src => src.ResponeAccount.Fullname))
+                .ForMember(dest => dest.IssueTypeDescription, opt => opt.MapFrom(src => GetEnumDescription(src.IssueType)));
+
             });
 
             return mapperConfig.CreateMapper();
+        }
+        public static string GetEnumDescription(Enum value)
+        {
+            var field = value.GetType().GetField(value.ToString());
+            var attribute = field?.GetCustomAttribute<DescriptionAttribute>();
+            return attribute?.Description ?? value.ToString();
         }
     }
 }

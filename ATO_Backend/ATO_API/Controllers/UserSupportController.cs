@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
+using Nest;
 using Service.AccountSer;
 using Service.UserSupportSer;
 
@@ -29,7 +30,7 @@ namespace ATO_API.Controllers
         }
         [HttpPost("request-support")]
         [ProducesResponseType(typeof(ResponseVM), StatusCodes.Status200OK)]
-        public async Task<IActionResult> CreateUserSupport([FromBody] CreateUserSupportRequest request)
+        public async Task<IActionResult> CreateUserSupport([FromBody] UserSupportRequest request)
         {
             try
             {
@@ -39,7 +40,14 @@ namespace ATO_API.Controllers
                 }
                 UserSupport userSupport = _mapper.Map<UserSupport>(request);
                 ResponseVM respone = await _userSupportService.RequestUserSupport(userSupport);
-
+                if (respone.Status == false)
+                {
+                    return BadRequest(new ResponseVM
+                    {
+                        Status = respone.Status,
+                        Message = respone.Message,
+                    });
+                }
                 return Ok(respone);
             }
             catch (Exception ex)

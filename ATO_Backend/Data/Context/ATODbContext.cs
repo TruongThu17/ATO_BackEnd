@@ -111,6 +111,8 @@ namespace Data.ArmsContext
             new BlogSeeder(modelBuilder).Seed();
             new TourCompanySeeder(modelBuilder).Seed();
             new TouristFacilitySeeder(modelBuilder).Seed();
+            new UserSupportSeeder(modelBuilder).Seed();
+            new UserIssueSeeder(modelBuilder).Seed();
             #endregion
 
         }
