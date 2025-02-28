@@ -88,3 +88,5 @@ D:\Job\Thắng\clonebe\ATO_BackEnd\ATO_Backend\Service\bin\Debug\net8.0\Microsof
 D:\Job\Thắng\clonebe\ATO_BackEnd\ATO_Backend\Service\bin\Debug\net8.0\Microsoft.Extensions.FileProviders.Physical.dll
 D:\Job\Thắng\clonebe\ATO_BackEnd\ATO_Backend\Service\bin\Debug\net8.0\Microsoft.Extensions.FileSystemGlobbing.dll
 D:\Job\Thắng\clonebe\ATO_BackEnd\ATO_Backend\Service\bin\Debug\net8.0\Microsoft.Extensions.Primitives.dll
+D:\Job\Thắng\clonebe\ATO_BackEnd\ATO_Backend\Service\bin\Debug\net8.0\Microsoft.AspNetCore.Http.Abstractions.dll
+D:\Job\Thắng\clonebe\ATO_BackEnd\ATO_Backend\Service\bin\Debug\net8.0\Microsoft.AspNetCore.Http.Features.dll

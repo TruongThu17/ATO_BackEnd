@@ -69,6 +69,21 @@ namespace Service.UserSupportSer
             }
         }
 
+        public Task<List<UserSupport>> ListUserSupport()
+        {
+            try
+            {
+                var query = _userSupportRepository.Query()
+                                .Include(b => b.ResponeAccount).ToListAsync();
+                return query;
+            }
+            catch (Exception)
+            {
+
+                throw new Exception("Đã xảy ra lỗi vui lòng thử lại sau!");
+            }
+        }
+
         public async Task<ResponseVM> ReplyRequestUserSupport(ReplyUserSupportRequest userSupport)
         {
             try

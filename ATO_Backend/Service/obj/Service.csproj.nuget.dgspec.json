@@ -139,6 +139,10 @@
               "target": "Package",
               "version": "[4.9.0, )"
             },
+            "Microsoft.AspNetCore.Http.Abstractions": {
+              "target": "Package",
+              "version": "[2.3.0, )"
+            },
             "NEST": {
               "target": "Package",
               "version": "[7.17.5, )"
