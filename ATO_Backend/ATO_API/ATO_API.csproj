@@ -30,4 +30,10 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\GuideTeams\" />
+    <Folder Include="Controllers\Tourist\" />
+    <Folder Include="Controllers\TourCompany\" />
+  </ItemGroup>
+
 </Project>

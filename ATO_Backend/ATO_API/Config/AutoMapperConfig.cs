@@ -41,6 +41,14 @@ namespace ATO_API.Config
                 // TouristFacility
                 config.CreateMap<TouristFacility, TouristFacilityDTO>();
                 config.CreateMap<Account, TouristFacilityDTO_UserRespone>();
+                // product
+                config.CreateMap<Product, ProductDTO>();
+                config.CreateMap<CreateProductDTO, Product>();
+                config.CreateMap<UpdateProductDTO, Product>();
+                // OCOPSell
+                config.CreateMap<OCOPSell, OCOPSellDTO>();
+                config.CreateMap<CreateOCOPSellDTO, OCOPSell>();
+                config.CreateMap<UpdateOCOPSellDTO, OCOPSell>();
             });
 
             return mapperConfig.CreateMapper();
