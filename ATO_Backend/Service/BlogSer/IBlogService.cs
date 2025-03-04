@@ -11,6 +11,7 @@ namespace Service.BlogSer
     public interface IBlogService
     {
         Task<List<Blog>> GetListBlogs();
+        Task<List<Blog>> GetListBlogs_CM();
         Task<Blog> GetBlogDetails(Guid BlogId);
         Task<Blog> CreateBlogAsync(Blog blog);
         Task<bool> UpdateBlogAsync(Guid blogId, Blog blog);

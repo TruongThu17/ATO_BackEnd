@@ -43,6 +43,9 @@ namespace ATO_API.Controllers
             _tokenHelper = tokenHelper;
         }
         [HttpPost("login")]
+        [ProducesResponseType(typeof(ResponseLogin), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseVM), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResponseVM), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Login([FromBody] LoginDTO model)
         {
             try
@@ -67,6 +70,9 @@ namespace ATO_API.Controllers
         }
 
         [HttpPost("forgot-password/send-otp")]
+        [ProducesResponseType(typeof(ResponseVM_Email), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseVM_Email), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResponseVM), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ForgotPasswordSendOTP([FromBody] ForgotPassword_Request_DTO model)
         {
             try
@@ -94,6 +100,9 @@ namespace ATO_API.Controllers
             }
         }
         [HttpPost("forgot-password/verify-OTP")]
+        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseVM), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ResponseVM), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<string>> VerifyOtpAsync(string email, string otp)
         {
             try
@@ -121,6 +130,9 @@ namespace ATO_API.Controllers
         }
         [Authorize("guest")]
         [HttpPost("forgot-password")]
+        [ProducesResponseType(typeof(ResponseVM), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseVM), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ResponseVM), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPassword_DTO model)
         {
             try
