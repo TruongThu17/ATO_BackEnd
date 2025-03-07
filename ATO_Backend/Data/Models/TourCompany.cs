@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace Data.Models
 {
-    // công ty bán tour du lịch
     public class TourCompany
     {
         public Guid TourCompanyId { get; set; }
@@ -20,6 +19,7 @@ namespace Data.Models
         public DateTime CreateDate { get; set; }
         public DateTime? UpdateTime { get; set; }
         //FK
-        public virtual Account Account { get; set; }
+        public virtual Account? Account { get; set; }
+        public virtual ICollection<TourGuide>? TourGuides { get; set; }
     }
 }
