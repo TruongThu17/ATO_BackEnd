@@ -31,7 +31,7 @@ bld/
 # MSTest test Results
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
-
+ATO_Backend/ATO_API/Auth/ato-c80b3-firebase-adminsdk-fbsvc-e6a97098c2.json
 # NUNIT
 *.VisualState.xml
 TestResult.xml
