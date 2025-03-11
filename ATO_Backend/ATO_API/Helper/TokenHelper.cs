@@ -18,7 +18,7 @@ namespace ATO_API.Helper
             _audience = configuration["JWT:ValidAudience"];
         }
 
-        public string GenerateAccessToken(string email, int expirationMinutes = 30)
+        public string GenerateAccessToken(string username, int expirationMinutes = 30)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_secretKey);
@@ -26,7 +26,7 @@ namespace ATO_API.Helper
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                new Claim(ClaimTypes.Email, email),
+                new Claim(ClaimTypes.Name, username),
                 new Claim(ClaimTypes.Role, "guest")
                 }),
                     Expires = DateTime.UtcNow.AddMinutes(expirationMinutes),
