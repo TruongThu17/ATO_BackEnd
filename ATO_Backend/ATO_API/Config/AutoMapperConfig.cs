@@ -47,18 +47,27 @@ namespace ATO_API.Config
                 config.CreateMap<Account, TouristFacilityDTO_UserRespone>();
                 config.CreateMap<CreateTouristFacilityRequest, TouristFacility>();
                 config.CreateMap<UpdateTouristFacilityRequest, TouristFacility>();
+                config.CreateMap<TouristFacility, TouristFacilityDTO_Certfication>();
                 // TourCompany
                 config.CreateMap<TourCompany, TourCompanyDTO>();
                 config.CreateMap<Account, TourCompanyDTO_UserRespone>();
                 config.CreateMap<CreateTourCompanyRequest, TourCompany>();
                 // product
                 config.CreateMap<Product, ProductDTO>();
+                config.CreateMap<Product, ProductDTO_CM>();
                 config.CreateMap<CreateProductDTO, Product>();
                 config.CreateMap<UpdateProductDTO, Product>();
+                config.CreateMap<ApprovelProductDTO, Product>();
                 // OCOPSell
                 config.CreateMap<OCOPSell, OCOPSellDTO>();
                 config.CreateMap<CreateOCOPSellDTO, OCOPSell>();
                 config.CreateMap<UpdateOCOPSellDTO, OCOPSell>();
+                // Certification
+                config.CreateMap<Certification, CertificationRespone>();
+                config.CreateMap<CreateCertificationDTO, Certification>();
+                config.CreateMap<UpdateCertificationDTO, Certification>();
+                config.CreateMap<ApprovelCertificationDTO, Certification>();
+                config.CreateMap<Certification, CertificationRespone_CM>();
             });
 
             return mapperConfig.CreateMapper();

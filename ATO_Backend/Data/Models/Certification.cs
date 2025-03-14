@@ -27,8 +27,9 @@ namespace Data.Models
     }
     public enum StatusApproval
     {
-        Approved,
-        Processing,
-        Reject
+        Approved=0,
+        Processing=1,
+        Reject=2,
+        Update=3
     }
 }
