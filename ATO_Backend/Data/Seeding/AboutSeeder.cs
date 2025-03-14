@@ -11,9 +11,6 @@ namespace Data.Seeding
 {
     public class AboutSeeder
     {
-        /*
-
-         */
         private readonly ModelBuilder modelBuilder;
 
         public AboutSeeder(ModelBuilder modelBuilder)

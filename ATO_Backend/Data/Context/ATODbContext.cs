@@ -121,6 +121,8 @@ namespace Data.ArmsContext
             new ProductSeeder(modelBuilder).Seed();
             new OCOPSellSeeder(modelBuilder).Seed();
             new CertificationSeeder(modelBuilder).Seed();
+            new TourismPackageSeeder(modelBuilder).Seed();
+            new ActivitySeeder(modelBuilder).Seed();
             #endregion
 
         }
