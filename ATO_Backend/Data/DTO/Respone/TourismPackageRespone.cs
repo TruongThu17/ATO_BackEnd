@@ -20,12 +20,6 @@ namespace Data.DTO.Respone
         public StatusApproval StatusApproval { get; set; }
         public string? ReplyRequest { get; set; }
         public StatusOperating StatusOperating { get; set; }
-        public virtual TourCompany_TourismPackageRespone? TourCompany { get; set; }
         public virtual ICollection<ActivityRespone>? Activities { get; set; }
-    }
-    public class TourCompany_TourismPackageRespone
-    {
-        public Guid TourCompanyId { get; set; }
-        public string CompanynName { get; set; }
     }
 }

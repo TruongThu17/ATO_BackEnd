@@ -392,39 +392,39 @@ namespace ATO_API.Controllers.AFTO
                 });
             }
         }
-        [HttpPost("create-OCOPproductactivity")]
-        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ResponseVM), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ResponseVM), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateOCOPProductActivity([FromBody] OCOPProductActivityRequest OCOPProductActivityRequest)
-        {
-            try
-            {
-                OCOPProductActivity responseResult = _mapper.Map<OCOPProductActivity>(OCOPProductActivityRequest);
-                bool result = await _productService.CreateOCOPProductActivity_AFTO(responseResult);
-                if (result)
-                {
-                    return Ok(new ResponseVM
-                    {
-                        Status = true,
-                        Message = "Tạo mới thành công!",
-                    });
-                }
-                return StatusCode(400, new ResponseVM
-                {
-                    Status = false,
-                    Message = "Tạo mới không thành công!",
-                });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new ResponseVM
-                {
-                    Status = false,
-                    Message = ex.Message,
-                });
-            }
-        }
+        //[HttpPost("create-OCOPproductactivity")]
+        //[ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+        //[ProducesResponseType(typeof(ResponseVM), StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(typeof(ResponseVM), StatusCodes.Status500InternalServerError)]
+        //public async Task<IActionResult> CreateOCOPProductActivity([FromBody] OCOPProductActivityRequest OCOPProductActivityRequest)
+        //{
+        //    try
+        //    {
+        //        OCOPProductActivity responseResult = _mapper.Map<OCOPProductActivity>(OCOPProductActivityRequest);
+        //        bool result = await _productService.CreateOCOPProductActivity_AFTO(responseResult);
+        //        if (result)
+        //        {
+        //            return Ok(new ResponseVM
+        //            {
+        //                Status = true,
+        //                Message = "Tạo mới thành công!",
+        //            });
+        //        }
+        //        return StatusCode(400, new ResponseVM
+        //        {
+        //            Status = false,
+        //            Message = "Tạo mới không thành công!",
+        //        });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, new ResponseVM
+        //        {
+        //            Status = false,
+        //            Message = ex.Message,
+        //        });
+        //    }
+        //}
         //[HttpPut("update-OCOPproductactivity/{ProductId}/{ActivityOldId}")]
         //[ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
         //[ProducesResponseType(typeof(ResponseVM), StatusCodes.Status400BadRequest)]
