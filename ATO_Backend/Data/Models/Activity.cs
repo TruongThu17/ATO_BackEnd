@@ -24,5 +24,6 @@ namespace Data.Models
         public Guid? PackageId { get; set; }
         public virtual ICollection<OCOPProductActivity>? OCOPProductActivities { get; set; }
         public virtual TourismPackage? TourismPackage { get; set; }
+        public virtual ICollection<TourDestination>? TourDestinations { get; set; }
     }
 }

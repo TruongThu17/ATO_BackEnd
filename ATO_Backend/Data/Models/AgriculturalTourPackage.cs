@@ -22,5 +22,6 @@ namespace Data.Models
         public DateTime? UpdateDate { get; set; }
         public Guid TourCompanyId { get; set; }
         public virtual TourCompany? TourCompany { get; set; }
+        public virtual ICollection<TourDestination>? TourDestinations { get; set; }
     }
 }
