@@ -22,5 +22,11 @@ namespace Data.DTO.Respone
         public DateTime? UpdateDate { get; set; }
         public StatusApproval StatusApproval { get; set; }
         public string? ReplyRequest { get; set; }
+        public virtual ICollection<Product_ActivityRespone>? Products { get; set; }
+    }
+    public class Product_ActivityRespone
+    {
+        public Guid ProductId { get; set; }
+        public string ProductName { get; set; }
     }
 }
