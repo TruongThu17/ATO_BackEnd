@@ -27,6 +27,7 @@ namespace Data.DTO.Respone
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
         public virtual ProductDTO_Order? Product { get; set; }
+        public virtual ICollection<VNPayPaymentResponseDTO> VNPayPaymentResponses { get; set; }
     }
     public class ProductDTO_Order
     {
@@ -37,4 +38,23 @@ namespace Data.DTO.Respone
         public UnitProduct? UnitProduct { get; set; }
         public ProductCategory ProductCategory { get; set; }
     }
-}
+    public class VNPayPaymentResponseDTO
+    {
+        public Guid ResponseId { get; set; }
+        public Guid? OrderId { get; set; }
+        public string TxnRef { get; set; }
+        public decimal Amount { get; set; }
+        public string BankCode { get; set; }
+        public string BankTranNo { get; set; }
+        public string CardType { get; set; }
+        public string OrderInfo { get; set; }
+        public DateTime PayDate { get; set; }
+        public string ResponseCode { get; set; }
+        public string TmnCode { get; set; }
+        public string TransactionNo { get; set; }
+        public string TransactionStatus { get; set; }
+        public string SecureHash { get; set; }
+
+        public TypePayment TypePayment { get; set; }
+    }
+ }
