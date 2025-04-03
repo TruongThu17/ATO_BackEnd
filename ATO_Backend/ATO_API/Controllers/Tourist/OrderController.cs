@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Service.AccountSer;
 using Service.DriverSer;
 using Service.OrderSer;
+using Service.ShippingSer;
 using Service.VnPaySer;
 using StackExchange.Redis;
 using System.Text;
@@ -26,12 +27,14 @@ namespace ATO_API.Controllers.Tourist
         private readonly IMapper _mapper;
         private readonly IVnPayService _vnPayService;
         private readonly IConfiguration _configuration;
+        private readonly IShippingService _shippingService;
         public OrderController(
             IMapper mapper,
             IOrderService orderService,
             IConnectionMultiplexer redis,
             IVnPayService vnPayService,
-            IConfiguration configuration
+            IConfiguration configuration,
+            IShippingService shippingService
            )
         {
             _mapper = mapper;
@@ -39,6 +42,7 @@ namespace ATO_API.Controllers.Tourist
             _redis = redis;
             _vnPayService = vnPayService;
             _configuration = configuration;
+            _shippingService = shippingService;
         }
         [HttpGet("get-list-orders")]
         [ProducesResponseType(typeof(List<OrderRespone>), StatusCodes.Status200OK)]
@@ -183,6 +187,44 @@ namespace ATO_API.Controllers.Tourist
                 return StatusCode(500, new ResponseVM { Status = false, Message = ex.Message });
             }
         }
+        [HttpPost("create-shipping/{orderId}")]
+        [ProducesResponseType(typeof(ShippingOrderResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseVM), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> CreateShippingOrder([FromBody] ShippingOrderRequest request)
+        {
+            try
+            {
+                var response = await _shippingService.CreateShippingOrder(request);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ResponseVM
+                {
+                    Status = false,
+                    Message = ex.Message,
+                });
+            }
+        }
 
+        [HttpGet("track-shipping/{orderCode}")]
+        [ProducesResponseType(typeof(ShippingTrackingResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResponseVM), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> TrackShippingOrder(string orderCode)
+        {
+            try
+            {
+                var response = await _shippingService.TrackShippingOrder(orderCode);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ResponseVM
+                {
+                    Status = false,
+                    Message = ex.Message,
+                });
+            }
+        }
     }
 }

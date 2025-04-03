@@ -101,6 +101,7 @@ namespace ATO_API.Config
                 config.CreateMap<AgriculturalTourPackageRequest_TourGuides, TourGuide>();
                 // TourismPackage
                 config.CreateMap<TourismPackage, TourismPackageRespone>();
+                config.CreateMap<TourismPackage, TourismPackageRespone_Guest>();
                 config.CreateMap<TourismPackageRequest, TourismPackage>();
                 // Activity
                 config.CreateMap<Activity, ActivityRespone>();
@@ -116,8 +117,10 @@ namespace ATO_API.Config
                 // AgriculturalTourPackage
                 config.CreateMap<AgriculturalTourPackage, AgriculturalTourPackageRespone>();
                 config.CreateMap<AgriculturalTourPackageRequest, AgriculturalTourPackage>();
+                config.CreateMap<AgriculturalTourPackage, AgriculturalTourPackageRespone_Guest>();
                 // TourDestination
                 config.CreateMap<TourDestination, AgriculturalTourPackage_TourDestination_Respone>();
+                config.CreateMap<TourDestination, AgriculturalTourPackage_TourDestination_Respone_Guest>();
                 config.CreateMap<TourDestinationRequest, TourDestination>();
                 // Order
                 config.CreateMap<Order, OrderRespone>();

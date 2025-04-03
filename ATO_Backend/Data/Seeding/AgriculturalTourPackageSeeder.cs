@@ -38,6 +38,7 @@ namespace Data.Seeding
                     CreateDate = DateTime.UtcNow,
                     UpdateDate = null,
                     TourCompanyId = Guid.Parse("E33545B1-C97E-412F-B844-17B15CD28B74"),
+                    StatusActive = StatusActive.active
                 },
                 new AgriculturalTourPackage
                 {
@@ -58,6 +59,7 @@ namespace Data.Seeding
                     CreateDate = DateTime.UtcNow,
                     UpdateDate = null,
                     TourCompanyId = Guid.Parse("E33545B1-C97E-412F-B844-17B15CD28B74"),
+                    StatusActive = StatusActive.active
                 },
                 new AgriculturalTourPackage
                 {
@@ -78,6 +80,7 @@ namespace Data.Seeding
                     CreateDate = DateTime.UtcNow,
                     UpdateDate = null,
                     TourCompanyId = Guid.Parse("E33545B1-C97E-412F-B844-17B15CD28B74"),
+                    StatusActive = StatusActive.active
                 },
                 new AgriculturalTourPackage
                 {
@@ -98,6 +101,7 @@ namespace Data.Seeding
                     CreateDate = DateTime.UtcNow,
                     UpdateDate = null,
                     TourCompanyId = Guid.Parse("E33545B1-C97E-412F-B844-17B15CD28B74"),
+                    StatusActive = StatusActive.active
                 },
                 new AgriculturalTourPackage
                 {
@@ -118,6 +122,7 @@ namespace Data.Seeding
                     CreateDate = DateTime.UtcNow,
                     UpdateDate = null,
                     TourCompanyId = Guid.Parse("E33545B1-C97E-412F-B844-17B15CD28B74"),
+                    StatusActive = StatusActive.active
                 },
                 new AgriculturalTourPackage
                 {
@@ -138,6 +143,7 @@ namespace Data.Seeding
                     CreateDate = DateTime.UtcNow,
                     UpdateDate = null,
                     TourCompanyId = Guid.Parse("E33545B1-C97E-412F-B844-17B15CD28B74"),
+                    StatusActive = StatusActive.active
                 },
                 new AgriculturalTourPackage
                 {
@@ -157,7 +163,8 @@ namespace Data.Seeding
                     DurationsType = TimeType.day,
                     CreateDate = DateTime.UtcNow,
                     UpdateDate = null,
-                    TourCompanyId = Guid.Parse("E33545B1-C97E-412F-B844-17B15CD28B74")
+                    TourCompanyId = Guid.Parse("E33545B1-C97E-412F-B844-17B15CD28B74"),
+                    StatusActive = StatusActive.active
                 },
                 new AgriculturalTourPackage
                 {
@@ -177,7 +184,8 @@ namespace Data.Seeding
                     DurationsType = TimeType.day,
                     CreateDate = DateTime.UtcNow,
                     UpdateDate = null,
-                    TourCompanyId = Guid.Parse("E33545B1-C97E-412F-B844-17B15CD28B74")
+                    TourCompanyId = Guid.Parse("E33545B1-C97E-412F-B844-17B15CD28B74"),
+                    StatusActive = StatusActive.active
                 },
                 new AgriculturalTourPackage
                 {
@@ -197,7 +205,8 @@ namespace Data.Seeding
                     DurationsType = TimeType.hour,
                     CreateDate = DateTime.UtcNow,
                     UpdateDate = null,
-                    TourCompanyId = Guid.Parse("E33545B1-C97E-412F-B844-17B15CD28B74")
+                    TourCompanyId = Guid.Parse("E33545B1-C97E-412F-B844-17B15CD28B74"),
+                    StatusActive = StatusActive.active
 
                 }
 

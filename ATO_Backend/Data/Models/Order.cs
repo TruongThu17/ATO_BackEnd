@@ -19,6 +19,7 @@ namespace Data.Models
         public double TotalAmount { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime? UpdateDate { get; set; }
+        public string? ShippingCode { get; set; }
         public virtual Account? Account { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         public virtual ICollection<VNPayPaymentResponse> VNPayPaymentResponses { get; set; }
