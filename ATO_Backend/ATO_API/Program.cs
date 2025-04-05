@@ -196,6 +196,7 @@ builder.Services.AddScoped<IRepository<OrderDetail>, Repository<OrderDetail>>();
 builder.Services.AddScoped<IVnPayService, VnPayService>();
 builder.Services.AddScoped<IRepository<VNPayPaymentResponse>, Repository<VNPayPaymentResponse>>();
 //ship 
+builder.Services.AddHttpClient();
 builder.Services.AddScoped<IShippingService, ShippingService>();
 // app
 var app = builder.Build();

@@ -14,6 +14,5 @@ namespace Data.Models
         public decimal UnitPrice { get; set; }
         public virtual Order? Order { get; set; }
         public virtual Product? Product { get; set; }
-        public virtual ICollection<VNPayPaymentResponse>? VNPayPaymentResponses { get; set; }
     }
 }

@@ -29,6 +29,7 @@ namespace Data.Models
     public enum TypePayment
     {
         TourPayment =0,
-        OrderPayment=1
+        OrderPayment=1,
+        Refunded = 2,
     }
 }

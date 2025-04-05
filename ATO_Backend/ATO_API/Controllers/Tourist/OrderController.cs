@@ -13,7 +13,9 @@ using Service.OrderSer;
 using Service.ShippingSer;
 using Service.VnPaySer;
 using StackExchange.Redis;
+using System.Net.Http;
 using System.Text;
+using System.Transactions;
 
 namespace ATO_API.Controllers.Tourist
 {
@@ -187,44 +189,80 @@ namespace ATO_API.Controllers.Tourist
                 return StatusCode(500, new ResponseVM { Status = false, Message = ex.Message });
             }
         }
-        [HttpPost("create-shipping/{orderId}")]
-        [ProducesResponseType(typeof(ShippingOrderResponse), StatusCodes.Status200OK)]
+        [HttpPost("refund-order/{orderId}")]
+        [ProducesResponseType(typeof(ResponseVM), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseVM), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateShippingOrder([FromBody] ShippingOrderRequest request)
+        public async Task<IActionResult> RefundOrder(Guid orderId)
         {
             try
             {
-                var response = await _shippingService.CreateShippingOrder(request);
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new ResponseVM
-                {
-                    Status = false,
-                    Message = ex.Message,
-                });
-            }
-        }
+                var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                if (userId == null) return Unauthorized();
 
-        [HttpGet("track-shipping/{orderCode}")]
-        [ProducesResponseType(typeof(ShippingTrackingResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ResponseVM), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> TrackShippingOrder(string orderCode)
-        {
-            try
-            {
-                var response = await _shippingService.TrackShippingOrder(orderCode);
-                return Ok(response);
+                var order = await _orderService.GetOrderDetails(orderId);
+                if (order == null)
+                {
+                    return NotFound(new ResponseVM
+                    {
+                        Status = false,
+                        Message = "Không tìm thấy đơn hàng!"
+                    });
+                }
+
+                if (order.CustomerId != Guid.Parse(userId))
+                {
+                    return BadRequest(new ResponseVM
+                    {
+                        Status = false,
+                        Message = "Bạn không có quyền hoàn tiền đơn hàng này!"
+                    });
+                }
+
+                var successfulPayment = order.VNPayPaymentResponses?
+                    .FirstOrDefault(x => x.TransactionStatus == "00");
+
+                if (successfulPayment == null)
+                {
+                    return BadRequest(new ResponseVM
+                    {
+                        Status = false,
+                        Message = "Không tìm thấy giao dịch thanh toán hợp lệ!"
+                    });
+                }
+                string returnUrl = _configuration.GetValue<string>("VNPaySettings:RefundUrl");
+                var refundResult = await _vnPayService.ProcessRefundAsync(
+                    successfulPayment,
+                    (decimal)order.TotalAmount,
+                    order.OrderId.ToString(),
+                    returnUrl
+                );
+
+                if (!refundResult.Success)
+                {
+                    return BadRequest(new ResponseVM
+                    {
+                        Status = false,
+                        Message = "Hoàn tiền thất bại. Vui lòng thử lại sau!"
+                    });
+                }
+                var PaymentStatus = refundResult.Success ? 3:2;
+                await _orderService.UpdateOrderStatus(orderId, PaymentType.Refunded, PaymentStatus, StatusOrder.Canceled);
+                await _orderService.AddOrderPayment(refundResult.Response);
+                return Ok(new ResponseVM
+                {
+                    Status = true,
+                    Message = "Hoàn tiền thành công!"
+                });
             }
             catch (Exception ex)
             {
                 return StatusCode(500, new ResponseVM
                 {
                     Status = false,
-                    Message = ex.Message,
+                    Message = "Đã xảy ra lỗi trong quá trình hoàn tiền: " + ex.Message
                 });
             }
         }
+        
     }
 }

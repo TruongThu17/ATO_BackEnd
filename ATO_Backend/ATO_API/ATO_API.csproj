@@ -51,6 +51,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Controllers\TourGuide\" />
     <Folder Include="wwwroot\uploads\" />
   </ItemGroup>
 
