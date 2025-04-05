@@ -1,6 +1,7 @@
 ﻿using Data.DTO.Request;
 using Data.DTO.Respone;
 using Microsoft.Extensions.Configuration;
+using Nest;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,105 +16,41 @@ namespace Service.ShippingSer
     {
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
-        private string _token;
+        private const string TOKEN = "c62d9d37-10c1-11f0-bdae-1aa8773b35dc";
+        private const int SHOP_ID = 5717558;
 
         public ShippingService(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
             _configuration = configuration;
-            _httpClient.BaseAddress = new Uri("https://partner.viettelpost.vn");
+            _httpClient.BaseAddress = new Uri("https://online-gateway.ghn.vn/shiip/public-api/");
+
+            // Clear any existing headers
+            _httpClient.DefaultRequestHeaders.Clear();
+
+            // Add required GHN headers
+            _httpClient.DefaultRequestHeaders.Add("Token", TOKEN);
+            _httpClient.DefaultRequestHeaders.Add("ShopId", SHOP_ID.ToString());
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            GetTokenAsync().Wait();
         }
-
-        private async Task GetTokenAsync()
-        {
-            try
-            {
-                var loginData = new
-                {
-                    username = "hoaithu1707.25@gmail.com",
-                    password = "Thu@1707"
-                };
-
-                var response = await _httpClient.PostAsJsonAsync("/?uId=login", loginData);
-                var responseContent = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Login Response: {responseContent}");
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    throw new Exception($"Login failed: {response.StatusCode}, Content: {responseContent}");
-                }
-
-                var result = await response.Content.ReadFromJsonAsync<LoginResponse>();
-                if (result?.data?.token == null)
-                {
-                    throw new Exception("Token not found in response");
-                }
-
-                _token = result.data.token;
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Login Error: {ex.Message}");
-                throw;
-            }
-        }
-
-
 
         public async Task<ShippingOrderResponse> CreateShippingOrder(ShippingOrderRequest request)
         {
             try
             {
-                var orderRequest = new
-                {
-                    ORDER_NUMBER = "DH" + DateTime.Now.Ticks,
-                    SENDER_FULLNAME = "Test Shop",
-                    SENDER_ADDRESS = "123 Test Street",
-                    SENDER_PHONE = "0363008467",
-                    SENDER_EMAIL = "test@email.com",
-                    SENDER_WARD = 550,
-                    SENDER_DISTRICT = 550,
-                    SENDER_PROVINCE = 550,
-                    RECEIVER_FULLNAME = request.ToName,
-                    RECEIVER_ADDRESS = request.ToAddress,
-                    RECEIVER_PHONE = request.ToPhone,
-                    RECEIVER_EMAIL = "",
-                    RECEIVER_WARD = 550,
-                    RECEIVER_DISTRICT = 550,
-                    RECEIVER_PROVINCE = 550,
-                    PRODUCT_NAME = "Test Product",
-                    PRODUCT_DESCRIPTION = request.Note,
-                    PRODUCT_QUANTITY = 1,
-                    PRODUCT_PRICE = 100000,
-                    PRODUCT_WEIGHT = request.Weight,
-                    PRODUCT_LENGTH = 15,
-                    PRODUCT_WIDTH = 15,
-                    PRODUCT_HEIGHT = 15,
-                    ORDER_PAYMENT = 1,
-                    ORDER_SERVICE = "VCN",
-                    ORDER_SERVICE_ADD = "",
-                    ORDER_VOUCHER = "",
-                    ORDER_NOTE = request.Note
-                };
-
-                var response = await _httpClient.PostAsJsonAsync("order/createOrder", orderRequest);
+                var response = await _httpClient.PostAsJsonAsync("v2/shipping-order/create", request);
                 var responseContent = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Viettel Post API Response: {responseContent}");
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    throw new Exception($"Viettel Post API Error: {responseContent}");
+                    throw new Exception($"GHN API Error: {responseContent}");
                 }
 
                 return await response.Content.ReadFromJsonAsync<ShippingOrderResponse>();
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
-                throw;
+                throw new Exception($"Create shipping order failed: {ex.Message}", ex);
             }
         }
 
@@ -121,84 +58,287 @@ namespace Service.ShippingSer
         {
             try
             {
-                var response = await _httpClient.GetAsync($"order/tracking?order_number={orderCode}");
+                var response = await _httpClient.GetAsync($"v2/shipping-order/detail?order_code={orderCode}");
                 var responseContent = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    throw new Exception($"Viettel Post Tracking API Error: {responseContent}");
+                    throw new Exception($"GHN Tracking API Error: {responseContent}");
                 }
 
                 return await response.Content.ReadFromJsonAsync<ShippingTrackingResponse>();
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Tracking Error: {ex.Message}");
-                throw;
+                throw new Exception($"Track shipping order failed: {ex.Message}", ex);
             }
         }
-        private class LoginResponse
+        public async Task<ShippingFeeResponse> CalculateShippingFee(ShippingFeeRequest request)
         {
+            try
+            {
+                var feeRequest = new
+                {
+                    from_district_id = 1454, // Hardcoded district ID for testing
+                    from_ward_code = "21211", // Hardcoded ward code for testing
+                    to_district_id = request.ToDistrictId,
+                    to_ward_code = request.ToWardCode,
+                    height = request.Height,
+                    length = request.Length,
+                    weight = request.Weight,
+                    width = request.Width,
+                    insurance_value = request.InsuranceValue,
+                    service_type_id = 2
+                };
+
+                var response = await _httpClient.PostAsJsonAsync("v2/shipping-order/fee", feeRequest);
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception($"GHN Fee Calculation Error: {responseContent}");
+                }
+
+                return await response.Content.ReadFromJsonAsync<ShippingFeeResponse>();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Calculate shipping fee failed: {ex.Message}", ex);
+            }
+        }
+
+        // Get provinces
+        public async Task<ProvinceResponse> GetProvinces()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync("master-data/province");
+                return await response.Content.ReadFromJsonAsync<ProvinceResponse>();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Get provinces failed: {ex.Message}", ex);
+            }
+        }
+
+        // Get districts by province
+        public async Task<DistrictResponse> GetDistricts(int provinceId)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"master-data/district?province_id={provinceId}");
+                return await response.Content.ReadFromJsonAsync<DistrictResponse>();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Get districts failed: {ex.Message}", ex);
+            }
+        }
+
+        // Get wards by district
+        public async Task<WardResponse> GetWards(int districtId)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"master-data/ward?district_id={districtId}");
+                return await response.Content.ReadFromJsonAsync<WardResponse>();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Get wards failed: {ex.Message}", ex);
+            }
+        }
+
+        // Cancel shipping order
+        public async Task<BaseResponse> CancelOrder(string orderCode)
+        {
+            try
+            {
+                var request = new { order_codes = new[] { orderCode } };
+                var response = await _httpClient.PostAsJsonAsync("v2/switch-status/cancel", request);
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception($"GHN Cancel Order Error: {responseContent}");
+                }
+
+                return await response.Content.ReadFromJsonAsync<BaseResponse>();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Cancel order failed: {ex.Message}", ex);
+            }
+        }
+
+        // Print shipping label
+        public async Task<string> PrintShippingLabel(string orderCode)
+        {
+            try
+            {
+                var request = new { order_codes = new[] { orderCode } };
+                var response = await _httpClient.PostAsJsonAsync("v2/a5/gen-token", request);
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception($"GHN Print Label Error: {responseContent}");
+                }
+
+                var printResponse = await response.Content.ReadFromJsonAsync<PrintResponse>();
+                return printResponse.Data.Token;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Print shipping label failed: {ex.Message}", ex);
+            }
+        }
+
+        public class GHNResponse
+        {
+            public int code { get; set; }
             public string message { get; set; }
-            public string status { get; set; }
-            public LoginData data { get; set; }
+            public GHNOrderData data { get; set; }
         }
 
-        private class LoginData
+        public class GHNOrderData
         {
-            public string token { get; set; }
-            public string username { get; set; }
-            public string phone { get; set; }
-            public string name { get; set; }
+            public string order_code { get; set; }
+            public string expected_delivery_time { get; set; }
+            public decimal total_fee { get; set; }
+            public decimal insurance_fee { get; set; }
+            public decimal cod_fee { get; set; }
+            public int status { get; set; }
+            public string status_name { get; set; }
         }
 
-    }
         public class ShippingOrderResponse
         {
-            public bool Success { get; set; }
+            public int Code { get; set; }
             public string Message { get; set; }
-            public OrderData Data { get; set; }
+            public ShippingOrderData Data { get; set; }
         }
 
-        public class OrderData
+        public class ShippingOrderData
         {
-            public string ORDER_NUMBER { get; set; }
-            public string MONEY_COLLECTION { get; set; }
-            public string MONEY_TOTAL { get; set; }
-            public string MONEY_TOTAL_FEE { get; set; }
-            public string EXCHANGE_WEIGHT { get; set; }
-            public string MONEY_FEE { get; set; }
-            public string MONEY_OTHER_FEE { get; set; }
-            public string MONEY_VAT { get; set; }
-            public string MONEY_TOTAL_CONFIRM { get; set; }
-            public string ORDER_STATUS { get; set; }
-            public string ORDER_STATUS_NAME { get; set; }
-            public string ORDER_DETAIL_STATUS { get; set; }
-            public string ORDER_DETAIL_STATUS_NAME { get; set; }
+            public string OrderCode { get; set; }
+            public string ExpectedDeliveryTime { get; set; }
+            public decimal TotalFee { get; set; }
+            public decimal InsuranceFee { get; set; }
+            public decimal CodFee { get; set; }
+            public int Status { get; set; }
+            public string StatusName { get; set; }
         }
 
         public class ShippingTrackingResponse
         {
-            public bool Success { get; set; }
+            public int Code { get; set; }
             public string Message { get; set; }
             public TrackingData Data { get; set; }
         }
 
         public class TrackingData
         {
-            public string ORDER_NUMBER { get; set; }
-            public string ORDER_REFERENCE { get; set; }
-            public string ORDER_STATUS { get; set; }
-            public string ORDER_STATUS_NAME { get; set; }
-            public List<TrackingHistory> ORDER_TRACKING { get; set; }
+            public string OrderCode { get; set; }
+            public string ClientOrderCode { get; set; }
+            public int Status { get; set; }
+            public string StatusName { get; set; }
+            public DateTime CreatedDate { get; set; }
+            public DateTime? LastUpdateDate { get; set; }
+            public decimal TotalFee { get; set; }
+            public List<TrackingLog> TrackingLogs { get; set; }
         }
 
-        public class TrackingHistory
+        public class TrackingLog
         {
-            public string STATUS { get; set; }
-            public string STATUS_NAME { get; set; }
-            public string LOCATION { get; set; }
-            public DateTime TIMESTAMP { get; set; }
-            public string DESCRIPTION { get; set; }
+            public string Status { get; set; }
+            public string StatusName { get; set; }
+            public DateTime Timestamp { get; set; }
+            public string Location { get; set; }
+            public string Description { get; set; }
+            public string Reason { get; set; }
         }
+    }
+    public class ShippingFeeResponse : BaseResponse
+    {
+        public FeeData Data { get; set; }
+    }
+
+    public class FeeData
+    {
+        public decimal Total { get; set; }
+        public decimal ServiceFee { get; set; }
+        public decimal InsuranceFee { get; set; }
+        public decimal CodFee { get; set; }
+        public string ExpectedDeliveryTime { get; set; }
+    }
+
+    public class ProvinceResponse : BaseResponse
+    {
+        public List<ProvinceData> Data { get; set; }
+    }
+
+    public class ProvinceData
+    {
+        public int ProvinceID { get; set; }
+        public string ProvinceName { get; set; }
+    }
+
+    public class DistrictResponse : BaseResponse
+    {
+        public List<DistrictData> Data { get; set; }
+    }
+
+    public class DistrictData
+    {
+        public int DistrictID { get; set; }
+        public string DistrictName { get; set; }
+    }
+
+    public class WardResponse : BaseResponse
+    {
+        public List<WardData> Data { get; set; }
+    }
+
+    public class WardData
+    {
+        public string WardCode { get; set; }
+        public string WardName { get; set; }
+    }
+
+    public class PrintResponse : BaseResponse
+    {
+        public PrintData Data { get; set; }
+    }
+
+    public class PrintData
+    {
+        public string Token { get; set; }
+    }
+
+    public class BaseResponse
+    {
+        public int Code { get; set; }
+        public string Message { get; set; }
+    }
+    public class ShippingFeeRequest
+    {
+        // Destination Information
+        public string ToWardCode { get; set; }
+        public int ToDistrictId { get; set; }
+
+        // Package Dimensions
+        public int Weight { get; set; }
+        public int Length { get; set; } = 15;
+        public int Width { get; set; } = 15;
+        public int Height { get; set; } = 15;
+
+        // Insurance and Service
+        public decimal InsuranceValue { get; set; } = 0;
+        public int ServiceTypeId { get; set; } = 2;
+
+        // Optional Settings
+        public bool IsFreeShip { get; set; } = false;
+        public decimal CouponValue { get; set; } = 0;
+    }
 }
