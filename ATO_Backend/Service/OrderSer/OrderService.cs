@@ -177,6 +177,22 @@ namespace Service.OrderSer
         {
             throw new NotImplementedException();
         }
+        public async Task<bool> UpdateShipCode(Guid OrderId, string ShipCode)
+        {
+            try
+            {
+            var order =  await _orderRepository.Query()
+                   .SingleOrDefaultAsync(x => x.OrderId == OrderId);
+                order.ShipCode = ShipCode;
+                await _orderRepository.UpdateAsync(order);
+                return true;
+
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
 
         public async Task AddOrderPayment(Data.Models.VNPayPaymentResponse checkResponse)
         {
