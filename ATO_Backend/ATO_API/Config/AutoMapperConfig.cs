@@ -132,6 +132,9 @@ namespace ATO_API.Config
                 config.CreateMap<OrderDetailRequest, OrderDetail>();
                 // VNPayPaymentResponse
                 config.CreateMap<VNPayPaymentResponse, VNPayPaymentResponseDTO>();
+                // BookingAgriculturalTour
+                config.CreateMap<BookingAgriculturalTour, BookingAgriculturalTourRespone>();
+                config.CreateMap<BookingAgriculturalTourRequest, BookingAgriculturalTour>();
             });
 
             return mapperConfig.CreateMapper();

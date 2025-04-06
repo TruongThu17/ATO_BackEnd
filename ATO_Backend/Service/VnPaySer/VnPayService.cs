@@ -77,7 +77,8 @@ namespace Service.VnPaySer
             return new Data.Models.VNPayPaymentResponse
             {
                 ResponseId = Guid.NewGuid(),
-                OrderId = Guid.Parse(vnp_OrderInfo),
+                OrderId = vnp_OrderType == "0" ? Guid.Parse(vnp_OrderInfo): null,
+                BookingId = vnp_OrderType != "0" ? Guid.Parse(vnp_OrderInfo) : null,
                 TxnRef = vnp_TxnRef,
                 Amount = vnp_Amount,
                 BankCode = vnp_BankCode,
