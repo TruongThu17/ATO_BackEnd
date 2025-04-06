@@ -53,7 +53,7 @@ namespace Data.DTO.Request
         public int service_type_id { get; set; } = 2;
         public int service_id { get; set; }
         public string required_note { get; set; } = "KHONGCHOXEMHANG";
-    public string coupon { get; set; }
+        public string coupon { get; set; }
 
         // Items Information
         public List<ShippingOrderItem> items { get; set; } = new List<ShippingOrderItem>();
