@@ -209,7 +209,7 @@ namespace Data.Seeding
                     ExpiryDate = DateTime.Now,
                     CertificationDetails = "Chứng nhận hệ thống quản lý chất lượng",
                     CreateDate = DateTime.Now,
-                    StatusApproval = StatusApproval.Reject ,
+                    StatusApproval = StatusApproval.Reject,
                     ReplyRequest = "Yêu cầu xác nhận chứng chỉ chưa đạt yêu cầu!",
                     IssuingOrganization = "Trung tâm kiểm nghiệm và chứng nhận CGLOBAL"
                 },
