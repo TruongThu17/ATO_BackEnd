@@ -27,5 +27,6 @@ namespace Data.Models
         public virtual ICollection<Order>? Orders { get; set; }
         public virtual ICollection<BookingAgriculturalTour>? BookingAgriculturalTours { get; set; }
         public virtual ICollection<Feedback>? Feedbacks { get; set; }
+        public virtual ICollection<ShipAddress>? ShipAddresses { get; set; }
     }
 }
