@@ -20,6 +20,8 @@ namespace Data.DTO.Respone
         public double TotalAmount { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime? UpdateDate { get; set; }
+        public double TotalAmountProducts { get; set; }
+        public double TotalShip { get; set; }
         public virtual ICollection<OrderDetailRespone> OrderDetails { get; set; }
         public virtual ICollection<VNPayPaymentResponseDTO> VNPayPaymentResponses { get; set; }
     }
