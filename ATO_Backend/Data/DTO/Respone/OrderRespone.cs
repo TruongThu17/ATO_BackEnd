@@ -9,6 +9,7 @@ namespace Data.DTO.Respone
 {
     public class OrderRespone
     {
+        public Guid? BookingId { get; set; }
         public Guid OrderId { get; set; }
         public DateTime OrderDate { get; set; }
         public OrderType OrderType { get; set; }

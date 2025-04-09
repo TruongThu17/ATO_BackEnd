@@ -168,14 +168,14 @@ namespace Service.TourismPackageSer
                 existingActivity.PackageId = responseResult.PackageId;
                 existingActivity.UpdateDate = DateTime.UtcNow;
                 existingActivity.Products?.Clear();
-                if (existingActivity.Products != null)
+                if (existingActivity.Products == null)
                 {
-                    var ProductIds = existingActivity.Products.Select(tg => tg.ProductId).ToList();
+                    var ProductIds = responseResult.Products.Select(tg => tg.ProductId).ToList();
                     var Products = await _productRepository.Query()
                         .Where(tg => ProductIds.Contains(tg.ProductId))
                         .ToListAsync();
                     foreach (var tg in Products)
-                    {
+                    { 
                         existingActivity.Products.Add(tg);
                     }
                 }
