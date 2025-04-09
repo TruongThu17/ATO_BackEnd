@@ -256,7 +256,7 @@ namespace ATO_API.Controllers.AFTO
                         name = item.Product.ProductName,
                         code = item.Product.ProductId.ToString(),
                         quantity = item.Quantity,
-                        price = int.Parse(item.UnitPrice.ToString().Replace("00", "")),
+                        price = int.Parse(item.UnitPrice.ToString().Replace(".00", "")),
                         length = 15,
                         weight = 15,
                         height = 15,
