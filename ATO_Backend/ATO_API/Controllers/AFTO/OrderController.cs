@@ -247,7 +247,6 @@ namespace ATO_API.Controllers.AFTO
                 request.to_address = shipToUser.ToAddress;
                 request.to_ward_code = shipToUser.ToWardCode;
                 request.to_district_id = shipToUser.ToDistrictId;
-                var shipping = await _shippingService.CreateShippingOrder(request);
                 var order = await _orderService.GetOrderDetails(Guid.Parse(request.client_order_code));
                 Guid TouristFacilityId = Guid.NewGuid();
                 foreach (var item in order.OrderDetails)
@@ -292,6 +291,7 @@ namespace ATO_API.Controllers.AFTO
                 request.service_id = 0;
                 request.coupon = "";
                 request.note = "nothing";
+                var shipping = await _shippingService.CreateShippingOrder(request);
                 await _orderService.UpdateShipCode(Guid.Parse(request.client_order_code), shipping.order_code);
                 return Ok(shipping);
             }
