@@ -92,10 +92,10 @@ namespace Service.TourismPackageSer
         {
             try
             {
-                TouristFacility TouristFacility = await _touristFacilityRepository.Query()
-                    .SingleOrDefaultAsync(x => x.UserId == UserId);
+          
                 return await _tourismPackageRepository.Query()
-                    .Where(x=>x.TouristFacilityId == TouristFacility.TouristFacilityId)
+                    .Include(x => x.TourDestinations)
+                    .Include(x => x.Activities)
                     .ToListAsync();
             }
             catch (Exception)

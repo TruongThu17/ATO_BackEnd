@@ -40,7 +40,7 @@ namespace Service.TourGuideSer
 
                 return await _tourGuideRepository.Query()
                        .Include(b => b.Account)
-                       .FirstOrDefaultAsync(x=>x.GuideId == GuideId);
+                       .FirstOrDefaultAsync(x => x.GuideId == GuideId);
             }
             catch (Exception)
             {
@@ -56,8 +56,9 @@ namespace Service.TourGuideSer
                 TourCompany TourCompany = await _tourCompanyRepository.Query()
        .SingleOrDefaultAsync(x => x.UserId == UserId);
                 return await _tourGuideRepository.Query()
+                    .AsNoTracking()
                        .Include(b => b.Account)
-                       .Where(x=>x.TourCompanyId == TourCompany.TourCompanyId)
+                       .Where(x => x.TourCompanyId == TourCompany.TourCompanyId)
                        .ToListAsync();
             }
             catch (Exception)
