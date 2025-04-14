@@ -30,6 +30,7 @@ namespace Data.DTO.Respone
         public double Price { get; set; }
         public double Durations { get; set; }
         public TimeType DurationsType { get; set; }
+        public virtual TouristFacilityDTO? TouristFacility { get; set; }
         public virtual ICollection<ActivityRespone>? Activities { get; set; }
     }
     public class ActivityRespone_TC
