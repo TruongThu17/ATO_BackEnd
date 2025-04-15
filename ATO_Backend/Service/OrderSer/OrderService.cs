@@ -53,7 +53,7 @@ namespace Service.OrderSer
                 order.StatusOrder = StatusOrder.Processing;
                 if (order.PaymentType == PaymentType.Transfer)
                 {
-                order.PaymentStatus  = PaymentStatus.UnPaid;
+                    order.PaymentStatus = PaymentStatus.UnPaid;
                 }
                 order.CreateDate = DateTime.UtcNow;
                 order.TotalAmount = (double)order.TotalAmount;
@@ -97,7 +97,7 @@ namespace Service.OrderSer
             foreach (var item in cart)
             {
                 Product product = await _productRepository.Query()
-                    .Include(x=>x.OCOPSells)
+                    .Include(x => x.OCOPSells)
                     .FirstOrDefaultAsync(x => x.ProductId == item.ProductId);
                 var latestSale = product.OCOPSells
                     .Where(s => s.ExpiryDate == null || s.ExpiryDate > DateTime.UtcNow)
@@ -130,8 +130,8 @@ namespace Service.OrderSer
             try
             {
                 return await _orderRepository.Query()
-                    .Include(x=>x.OrderDetails)
-                        .ThenInclude(y=>y.Product)
+                    .Include(x => x.OrderDetails)
+                        .ThenInclude(y => y.Product)
                             .ThenInclude(y => y.TouristFacility)
                     .Include(x => x.OrderDetails)
                     .Include(y => y.VNPayPaymentResponses)
@@ -149,7 +149,7 @@ namespace Service.OrderSer
             {
 
                 return await _orderRepository.Query()
-                    .Where(x => x.CustomerId == UserId && x.BookingId==null)
+                    .Where(x => x.CustomerId == UserId && x.BookingId == null)
                     .ToListAsync();
             }
             catch (Exception)
@@ -164,9 +164,9 @@ namespace Service.OrderSer
                 TouristFacility TouristFacility = await _touristFacilityRepository.Query()
                     .SingleOrDefaultAsync(x => x.UserId == UserId);
                 return await _orderRepository.Query()
-                    .Include(x=>x.OrderDetails)
-                    .ThenInclude(y=>y.Product)
-                    .Where(x => x.OrderDetails.Any(x=>x.Product.TouristFacilityId == TouristFacility.TouristFacilityId))
+                    .Include(x => x.OrderDetails)
+                    .ThenInclude(y => y.Product)
+                    .Where(x => x.OrderDetails.Any(x => x.Product.TouristFacilityId == TouristFacility.TouristFacilityId))
                     .ToListAsync();
             }
             catch (Exception)
@@ -182,8 +182,8 @@ namespace Service.OrderSer
         {
             try
             {
-            var order =  await _orderRepository.Query()
-                   .SingleOrDefaultAsync(x => x.OrderId == OrderId);
+                var order = await _orderRepository.Query()
+                       .SingleOrDefaultAsync(x => x.OrderId == OrderId);
                 order.ShipCode = ShipCode;
                 await _orderRepository.UpdateAsync(order);
                 return true;
@@ -201,9 +201,34 @@ namespace Service.OrderSer
             {
                 await _VNPayPaymentResponseRepository.AddAsync(checkResponse);
                 var order = await _orderRepository.Query()
+                    .Include(x => x.OrderDetails)
+                    .ThenInclude(od => od.Product)
+                    .ThenInclude(p => p.OCOPSells)
                     .SingleOrDefaultAsync(x => x.OrderId == checkResponse.OrderId);
-                if (checkResponse.TransactionStatus == "00" && checkResponse.TypePayment!= TypePayment.Refunded) order.PaymentStatus = PaymentStatus.Paid;
-                _orderRepository.UpdateAsync(order);
+
+                if (order == null) return;
+
+                checkResponse.Amount = (decimal)order.TotalAmount;
+                await _VNPayPaymentResponseRepository.AddAsync(checkResponse);
+
+                if (checkResponse.TransactionStatus == "00" && checkResponse.TypePayment != TypePayment.Refunded) order.PaymentStatus = PaymentStatus.Paid;
+                await _orderRepository.UpdateAsync(order);
+
+                // Update OCOP quantities for each order detail
+                foreach (var orderDetail in order.OrderDetails)
+                {
+                    var latestValidSell = orderDetail.Product?.OCOPSells?
+                        .Where(s => s.ExpiryDate == null || s.ExpiryDate > DateTime.UtcNow)
+                        .OrderBy(s => s.ExpiryDate)
+                        .FirstOrDefault();
+
+                    if (latestValidSell != null)
+                    {
+                        latestValidSell.SellVolume -= orderDetail.Quantity;
+                    }
+                }
+
+
             }
             catch (Exception)
             {
