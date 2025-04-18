@@ -303,10 +303,10 @@ namespace Data.Seeding
                   new Account
                   {
                       Id = Guid.Parse("20000000-0000-0000-0000-000000000018"),
-                      UserName = "QuyNhonExplorerAccount",
-                      NormalizedUserName = "QUYNHONEXPLORERACCOUNT",
-                      Email = "contact@quynhonexplorer.com",
-                      NormalizedEmail = "CONTACT@QUYNHONEXPLORER.COM",
+                      UserName = "quynhonexplorer",
+                      NormalizedUserName = "QUYNHONEXPLORER",
+                      Email = "contact@gmail.com",
+                      NormalizedEmail = "CONTACT@GMAIL.COM",
                       EmailConfirmed = true,
                       PasswordHash = new PasswordHasher<Account>().HashPassword(null, "A123@123a"),
                       SecurityStamp = Guid.NewGuid().ToString(),
@@ -317,7 +317,7 @@ namespace Data.Seeding
                   new Account
                   {
                       Id = Guid.Parse("20000000-0000-0000-0000-000000000019"),
-                      UserName = "HoiAnHeritageAccount",
+                      UserName = "hoianheritage",
                       NormalizedUserName = "HOIANHERITAGEACCOUNT",
                       Email = "contact@hoianheritage.com",
                       NormalizedEmail = "CONTACT@HOIANHERITAGE.COM",
