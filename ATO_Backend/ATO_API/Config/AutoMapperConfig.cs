@@ -142,8 +142,11 @@ namespace ATO_API.Config
                 // VNPayPaymentResponse
                 config.CreateMap<VNPayPaymentResponse, VNPayPaymentResponseDTO>();
                 config.CreateMap<VNPayPaymentResponse, VNPayPaymentResponse_History>();
+                //config.CreateMap<VNPayPaymentResponse, VNPayPaymentResponse_History_Order>()
+                //.ForMember(dest => dest.Order.Customer, opt => opt.MapFrom(src => src.Order.Account)) ;
                 config.CreateMap<VNPayPaymentResponse, VNPayPaymentResponse_History_Order>()
-                .ForPath(dest => dest.Order.Customer, opt => opt.MapFrom(src => src.Order.Account)) ;
+                .ForMember(dest => dest.Order, opt => opt.MapFrom(src => src.Order))
+                .ForPath(dest => dest.Order.Customer, opt => opt.MapFrom(src => src.Order.Account));
                 // BookingAgriculturalTour
                 config.CreateMap<BookingAgriculturalTour, BookingAgriculturalTourRespone>();
                 config.CreateMap<BookingAgriculturalTourRequest, BookingAgriculturalTour>();
