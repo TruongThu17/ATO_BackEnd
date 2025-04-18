@@ -22,12 +22,12 @@ namespace Data.Seeding
                 {
                     TourCompanyId = Guid.Parse("E33545B1-C97E-412F-B844-17B15CD28B74"),
                     UserId = Guid.Parse("053D18EF-BA0E-4141-B142-898D28FA9B5D"),
-                    AddressCompany = "03 Hai Bà Trưng, Phường Phan Chu Trinh, Quận Hoàn Kiếm, Hà Nội.",
+                    AddressCompany = "03 Hai Bà Trưng, Hoàn Kiếm, Hà Nội.",
                     CompanynName = "Công ty Cổ phần Vietravel",
                     CompanyDescription ="",
                     EmailCompany = "vtv.cholon@vietravel.com",
                     Website = "https://travel.com.vn/",
-                    LogoURL = "https://play-lh.googleusercontent.com/-BnWmZBj6b9ycH3atIcK8TyCfaIgGf5aOrqx4BjWYIxpZbaFEnsYvEviD9_zBxS3NzUB", 
+                    LogoURL = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWyblRzW2ET2uC9wdJBm6_PUq1zCiSi6SGJw&s", 
                     CreateDate = new DateTime(2025, 1, 22, 3, 38, 59, 419, DateTimeKind.Local).AddTicks(3253)
                 },
                 new TourCompany
@@ -171,7 +171,7 @@ namespace Data.Seeding
                     CompanyDescription = "Tour du lịch biển chất lượng cao.",
                     EmailCompany = "info@vungtautravel.com",
                     Website = "https://vungtautravel.com/",
-                    LogoURL = "https://th.bing.com/th/id/OIP.W_1Jrv8Ks5KZaGrQGIoHJQHaHa?w=164&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7",
+                    LogoURL = "https://mir-s3-cdn-cf.behance.net/project_modules/1400/2cf01f84467867.5d5da886617be.jpg",
                     CreateDate = DateTime.UtcNow
                 },
                 new TourCompany()
@@ -207,7 +207,7 @@ namespace Data.Seeding
                     CompanyDescription = "Tour du lịch khám phá Đà Lạt.",
                     EmailCompany = "info@dalattour.com",
                     Website = "https://dalattour.com/",
-                    LogoURL = "https://th.bing.com/th/id/OIP.1EvkEdhYkX-MQxoPdi1RCwAAAA?rs=1&pid=ImgDetMain",
+                    LogoURL = "https://images-platform.99static.com/OowUwWHMa4KA7v_azo1Bq_7ByCs=/6x0:1001x995/500x500/top/smart/99designs-contests-attachments/86/86578/attachment_86578583",
                     CreateDate = DateTime.UtcNow
                 },
                 new TourCompany()
