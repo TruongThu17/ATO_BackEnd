@@ -12,12 +12,16 @@
 
   <ItemGroup>
     <Compile Remove="Controllers\GuideTeams\**" />
+    <Compile Remove="Controllers\TourGuide\**" />
     <Compile Remove="Files\**" />
     <Content Remove="Controllers\GuideTeams\**" />
+    <Content Remove="Controllers\TourGuide\**" />
     <Content Remove="Files\**" />
     <EmbeddedResource Remove="Controllers\GuideTeams\**" />
+    <EmbeddedResource Remove="Controllers\TourGuide\**" />
     <EmbeddedResource Remove="Files\**" />
     <None Remove="Controllers\GuideTeams\**" />
+    <None Remove="Controllers\TourGuide\**" />
     <None Remove="Files\**" />
   </ItemGroup>
 
@@ -51,7 +55,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\TourGuide\" />
     <Folder Include="wwwroot\uploads\" />
   </ItemGroup>
 

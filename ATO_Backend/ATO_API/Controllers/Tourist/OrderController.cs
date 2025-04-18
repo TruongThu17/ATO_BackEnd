@@ -252,7 +252,7 @@ namespace ATO_API.Controllers.Tourist
                     });
                 }
 
-                var successfulPayment = order.VNPayPaymentResponses?
+               var successfulPayment = order.VNPayPaymentResponses?
                     .FirstOrDefault(x => x.TransactionStatus == "00");
 
                 if (successfulPayment == null)
@@ -271,7 +271,7 @@ namespace ATO_API.Controllers.Tourist
                     returnUrl
                 );
 
-                if (!refundResult.Success)
+                if (refundResult.Success==false)
                 {
                     return BadRequest(new ResponseVM
                     {
