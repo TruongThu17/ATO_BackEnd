@@ -35,7 +35,7 @@ namespace ATO_API.Controllers.AFTO
             try
             {
                 var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-                List<Data.Models.TourismPackage> response = await _tourismPackageService.GetListTourismPackages(Guid.Parse(userId));
+List<Data.Models.TourismPackage> response = await _tourismPackageService.GetListTourismPackages(Guid.Parse(userId));
                 List<TourismPackageRespone> responseResult = _mapper.Map<List<TourismPackageRespone>>(response);
                 return Ok(responseResult);
             }
