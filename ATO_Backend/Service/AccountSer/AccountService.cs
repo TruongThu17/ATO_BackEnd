@@ -52,7 +52,7 @@ namespace Service.AccountSer
             _emailService = emailService;
             _cache = cache;
             _tourCompanyRepository = tourCompanyRepository;
-            _roleManager= roleManager;
+            _roleManager = roleManager;
             _touristFacilityRepository = touristFacilityRepository;
         }
         public async Task<IEnumerable<Account>> GetAllAccountsAsync()
@@ -64,11 +64,11 @@ namespace Service.AccountSer
             try
             {
 
-            return await _accountRepository.Query()
-                   .Include(b => b.TourCompany)
-                   .Include(b => b.TouristFacility)
-                   .Include(b => b.TourGuide)
-                   .ToListAsync();
+                return await _accountRepository.Query()
+                       .Include(b => b.TourCompany)
+                       .Include(b => b.TouristFacility)
+                       .Include(b => b.TourGuide)
+                       .ToListAsync();
             }
             catch (Exception)
             {
@@ -87,7 +87,7 @@ namespace Service.AccountSer
                        .Include(b => b.TourCompany)
                        .Include(b => b.TouristFacility)
                        .Include(b => b.TourGuide)
-                       .FirstOrDefaultAsync(a=>a.Id == id);
+                       .FirstOrDefaultAsync(a => a.Id == id);
             }
             catch (Exception)
             {
