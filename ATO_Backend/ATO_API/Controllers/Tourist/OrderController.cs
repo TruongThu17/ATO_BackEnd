@@ -104,23 +104,28 @@ namespace ATO_API.Controllers.Tourist
         [Authorize(Roles = "Tourists")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseVM), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AddOrder([FromBody] OrderRequest OrderRequest)
+        public async Task<IActionResult> AddOrder([FromBody] OrderRequest orderRequest)
         {
             try
             {
-                var groupProducts = OrderRequest.OrderDetails.GroupBy(x => x.FacilityId).ToList();
+
+                var groupProducts = orderRequest.OrderDetails.GroupBy(x => x.FacilityId).ToList();
                 var groupResponses = new Dictionary<Guid, decimal>();
                 foreach (var products in groupProducts)
                 {
                     var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-                    var responseResult = _mapper.Map<Data.Models.Order>(OrderRequest);
+
+                    orderRequest.OrderDetails = products.ToList();
+                    orderRequest.TotalAmount = (double)products.Sum(x => x.Quantity * x.UnitPrice) + 21001;
+                    var responseResult = _mapper.Map<Data.Models.Order>(orderRequest);
+
                     responseResult.CustomerId = Guid.Parse(userId!);
                     var response = await _orderService.AddOrder(responseResult);
 
                     groupResponses.Add(response.OrderId, (decimal)response.TotalAmount);
                 }
 
-                if (OrderRequest.PaymentType == PaymentType.Transfer)
+                if (orderRequest.PaymentType == PaymentType.Transfer)
                 {
                     decimal fee = groupResponses.Sum(x => x.Value);
                     DateTime timecreate = DateTime.UtcNow;
@@ -159,7 +164,7 @@ namespace ATO_API.Controllers.Tourist
                 var listOrderId = listOrderIdRaw.Split(",")
                     .Select(x => Guid.Parse(x)).ToList();
 
-                foreach(var id in listOrderId)
+                foreach (var id in listOrderId)
                 {
                     checkResponse.OrderId = id;
                     checkResponse.ResponseId = Guid.NewGuid();
@@ -252,8 +257,8 @@ namespace ATO_API.Controllers.Tourist
                     });
                 }
 
-               var successfulPayment = order.VNPayPaymentResponses?
-                    .FirstOrDefault(x => x.TransactionStatus == "00");
+                var successfulPayment = order.VNPayPaymentResponses?
+                     .FirstOrDefault(x => x.TransactionStatus == "00");
 
                 if (successfulPayment == null)
                 {
@@ -271,7 +276,7 @@ namespace ATO_API.Controllers.Tourist
                     returnUrl
                 );
 
-                if (refundResult.Success==false)
+                if (refundResult.Success == false)
                 {
                     return BadRequest(new ResponseVM
                     {
