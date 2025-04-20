@@ -1,9 +1,4 @@
 ﻿using Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Service.TourismPackageSer
 {
@@ -18,5 +13,7 @@ namespace Service.TourismPackageSer
         Task<bool> UpdateTourismPackage_AFTO(Guid packageId, TourismPackage responseResult);
         Task<List<TourismPackage>> GetListTourism_TC();
         Task<TourismPackage> GetTourismPackage_TC(Guid PackageId);
+        Task<List<TourismPackage>> GetAllAsync();
+        Task<bool> ProcessApprovalAsync(Guid packageId, StatusApproval status);
     }
 }

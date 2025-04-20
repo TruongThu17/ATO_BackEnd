@@ -1,16 +1,7 @@
-﻿using Data.DTO.Request;
-using Data.DTO.Respone;
+﻿using Data.DTO.Respone;
 using Data.Models;
-using MailKit.Search;
 using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Asn1.X509;
 using Service.Repository;
-using StackExchange.Redis;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Service.BookingSer
 {

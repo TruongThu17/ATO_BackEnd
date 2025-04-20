@@ -1,23 +1,13 @@
 ﻿using Data.ArmsContext;
 using Microsoft.EntityFrameworkCore;
-using Nest;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Service.Repository
 {
-    public class Repository<T> : IRepository<T> where T : class
+    public class Repository<T>(ATODbContext context) : IRepository<T> where T : class
     {
-        private readonly ATODbContext _context;
+        private readonly ATODbContext _context = context;
 
-        public Repository(ATODbContext context)
-        {
-            _context = context;
-        }
         public IQueryable<T> Query()
         {
             return _context.Set<T>().AsQueryable();
@@ -92,6 +82,13 @@ namespace Service.Repository
         }
 
         public async Task AddRangeAsync(T entity)
+        {
+            await _context.Set<T>().AddRangeAsync(entity);
+            await _context.SaveChangesAsync();
+        }
+
+
+        public async Task RealAddRangeAsync(IEnumerable<T> entity)
         {
             await _context.Set<T>().AddRangeAsync(entity);
             await _context.SaveChangesAsync();
