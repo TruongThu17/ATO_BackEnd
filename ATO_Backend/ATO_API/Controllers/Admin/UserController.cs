@@ -1,18 +1,12 @@
-﻿using ATO_API.Helper;
-using AutoMapper;
+﻿using AutoMapper;
 using Data.DTO.Request;
 using Data.DTO.Respone;
 using Data.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.IdentityModel.Tokens;
 using Service.AccountSer;
-using System.Security.Principal;
 using System.Text.RegularExpressions;
 
 namespace ATO_API.Controllers.Admin
