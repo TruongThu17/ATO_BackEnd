@@ -270,7 +270,31 @@ namespace Service.OrderSer
                 throw new Exception("Đã xảy ra lỗi, vui lòng thử lại sau!");
             }
         }
+        public async Task<List<VNPayPaymentResponse>> ListHistoryPayments()
+        {
+            try
+            {
 
+                return await _VNPayPaymentResponseRepository.Query()
+                    .Include(x => x.Order)
+                        .ThenInclude(o => o.Account)
+                    .Include(x => x.Order)
+                        .ThenInclude(o => o.OrderDetails)
+                            .ThenInclude(od => od.Product)
+                     .Include(x => x.Order)
+                        .ThenInclude(o => o.Account)
+                     .Include(x => x.BookingAgriculturalTour)
+                        .ThenInclude(x => x.AgriculturalTourPackage)
+                    .Include(x => x.BookingAgriculturalTour)
+                        .ThenInclude(x => x.Customer)
+                    .OrderByDescending(x => x.PayDate)
+                    .ToListAsync();
+            }
+            catch (Exception)
+            {
+                throw new Exception("Đã xảy ra lỗi, vui lòng thử lại sau!");
+            }
+        }
 
         //public async Task UpdateOrderShipping(Guid orderId, ShippingOrderResponse shippingResponse)
         //{

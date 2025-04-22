@@ -64,6 +64,7 @@ namespace Data.ArmsContext
             modelBuilder.ApplyConfiguration(new BookingAgriculturalTourConfiguration());
             modelBuilder.ApplyConfiguration(new FeedbackConfiguration());
             modelBuilder.ApplyConfiguration(new ShipAddressConfiguration());
+            modelBuilder.ApplyConfiguration(new ContractConfiguration());
             #endregion
             #region config FK for generate account and role,...
             modelBuilder.Entity<IdentityUserLogin<Guid>>(entity =>
@@ -173,6 +174,7 @@ namespace Data.ArmsContext
         public DbSet<BookingAgriculturalTour> BookingAgriculturalTours { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
         public DbSet<ShipAddress> ShipAddresses { get; set; }
+        public DbSet<Contract> Contracts { get; set; }
 
         #endregion
     }
