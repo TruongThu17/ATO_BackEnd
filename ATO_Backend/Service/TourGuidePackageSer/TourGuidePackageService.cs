@@ -19,14 +19,13 @@ namespace Service.TourGuidePackageSer
 
         public async Task<List<AgriculturalTourPackage>> GetAssignedPackages(Guid guideId)
         {
-            return await _packageRepository.Query()
+            var query = _packageRepository.Query()
                 .Include(x => x.TourGuides)
-                .Include(x => x.TourDestinations)
-                    .ThenInclude(d => d.Activity)
-                .Include(x => x.TourDestinations)
-                    .ThenInclude(d => d.Accommodation)
                 .Include(x => x.TourCompany)
-                .Where(x => x.TourGuides.Any(g => g.GuideId == guideId))
+                .Include(x => x.TourDestinations)
+                .Where(x => x.TourGuides!.Any(g => g.UserId == guideId));
+
+            return await query
                 .OrderByDescending(x => x.CreateDate)
                 .ToListAsync();
         }
@@ -42,7 +41,7 @@ namespace Service.TourGuidePackageSer
                 .Include(x => x.TourCompany)
                 .FirstOrDefaultAsync(x => 
                     x.TourId == packageId && 
-                    x.TourGuides.Any(g => g.GuideId == guideId));
+                    x.TourGuides.Any(g => g.UserId == guideId));
         }
     }
 }
