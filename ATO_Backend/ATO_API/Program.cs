@@ -17,10 +17,15 @@ using Microsoft.OpenApi.Models;
 using Service.AboutSer;
 using Service.AccommodationSer;
 using Service.AccountSer;
+using Service.AdminBalanceSer;
 using Service.AgriculturalTourPackageSer;
 using Service.BlogSer;
 using Service.BookingSer;
+
 using Service.ContractSer;
+
+using Service.BookingTourDestinationSer;
+
 using Service.DriverSer;
 using Service.EmailSer;
 using Service.FeedbackSer;
@@ -36,6 +41,7 @@ using Service.TourismPackageSer;
 using Service.TouristFacilitySer;
 using Service.UserSupportSer;
 using Service.VnPaySer;
+using Service.WithdrawalSer;
 using StackExchange.Redis;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -211,9 +217,16 @@ builder.Services.AddScoped<IRepository<Feedback>, Repository<Feedback>>();
 //ShipAddress 
 builder.Services.AddScoped<IShipAddressService, ShipAddressService>();
 builder.Services.AddScoped<IRepository<ShipAddress>, Repository<ShipAddress>>();
+
 //Contract 
 builder.Services.AddScoped<IContractService, ContractService>();
 builder.Services.AddScoped<IRepository<Contract>, Repository<Contract>>();
+
+// Addition
+builder.Services.AddRepositoryServices();
+builder.Services.AddServices();
+
+
 // app
 var app = builder.Build();
 

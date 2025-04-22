@@ -1,12 +1,6 @@
-﻿using Data.DTO.Respone;
-using Data.Models;
+﻿using Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Service.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Service.ProductSer
 {
@@ -36,7 +30,7 @@ namespace Service.ProductSer
                 TouristFacility TouristFacility = await _touristFacilityRepository.Query()
                     .SingleOrDefaultAsync(x => x.UserId == UserId);
                 return await _OCOPSellRepository.Query()
-                    .Include(x=>x.Product)
+                    .Include(x => x.Product)
                     .Where(x => x.Product.TouristFacilityId == TouristFacility.TouristFacilityId)
                     .ToListAsync();
             }
@@ -77,9 +71,9 @@ namespace Service.ProductSer
             try
             {
                 TouristFacility TouristFacility = await _touristFacilityRepository.Query()
-                    .SingleOrDefaultAsync(x=>x.UserId== UserId);
+                    .SingleOrDefaultAsync(x => x.UserId == UserId);
                 return await _productRepository.Query()
-                    .Where(x=>x.TouristFacilityId == TouristFacility.TouristFacilityId)
+                    .Where(x => x.TouristFacilityId == TouristFacility.TouristFacilityId)
                     .ToListAsync();
             }
             catch (Exception)
@@ -142,6 +136,32 @@ namespace Service.ProductSer
                 throw new Exception("Đã xảy ra lỗi vui lòng thử lại sau!");
             }
         }
+
+
+        public async Task<bool> UpdateStatusAsync(Guid OCOPSellId, StatusActive status)
+        {
+            try
+            {
+                var existingOCOPSell = await _OCOPSellRepository.Query()
+                    .SingleOrDefaultAsync(x => x.OCOPSellId == OCOPSellId);
+
+                if (existingOCOPSell == null)
+                {
+                    throw new Exception("Không tìm thấy sản phẩm bán ra!");
+                }
+
+                existingOCOPSell.ActiveStatus = status == StatusActive.active;
+
+                await _OCOPSellRepository.UpdateAsync(existingOCOPSell);
+
+                return true;
+            }
+            catch (Exception)
+            {
+                throw new Exception("Đã xảy ra lỗi vui lòng thử lại sau!");
+            }
+        }
+
         public async Task<bool> CreateProduct_AFTO(Product newProduct, Guid UserId)
         {
             try
@@ -301,7 +321,7 @@ namespace Service.ProductSer
             try
             {
                 return await _certificationRepository.Query()
-                    .Include(x=>x.Product)
+                    .Include(x => x.Product)
                     .Include(x => x.TouristFacility)
                     .ToListAsync();
             }
@@ -364,7 +384,7 @@ namespace Service.ProductSer
                     throw new Exception("Không tìm thấy sản phẩm!");
                 }
 
-                existingProduct.StatusApproval  = updatedProduct.StatusApproval;
+                existingProduct.StatusApproval = updatedProduct.StatusApproval;
                 existingProduct.ReplyRequest = updatedProduct.ReplyRequest;
                 existingProduct.UpdateDate = DateTime.UtcNow;
 

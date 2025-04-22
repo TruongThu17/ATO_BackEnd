@@ -1,11 +1,4 @@
-﻿using Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Data.DTO.Request
+﻿namespace Data.DTO.Request
 {
     public class CreateAccountRequest
     {
@@ -15,6 +8,7 @@ namespace Data.DTO.Request
         public string? Fullname { get; set; }
         public bool? Gender { get; set; }
         public string? AvatarURL { get; set; }
+        public string? Password { get; set; }
         public DateTime? Dob { get; set; }
         public Guid Role { get; set; }
     }

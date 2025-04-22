@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Data.DTO.Request;
 using Data.DTO.Respone;
+using Data.DTO.Response;
 using Data.Models;
 using System.ComponentModel;
 using System.Reflection;
@@ -53,6 +54,7 @@ namespace ATO_API.Config
                 config.CreateMap<TouristFacility, TouristFacilityDTO_Certfication>();
                 config.CreateMap<TouristFacility, TouristFacilityDTO_Guest>();
                 config.CreateMap<TouristFacility, ProductDTO_TouristFacility>();
+                config.CreateMap<TouristFacility, TouristFacilityModel>();
                 // TourCompany
                 config.CreateMap<TourCompany, TourCompanyDTO>();
                 config.CreateMap<TourCompany, TourCompanyDTO_Guest>();
@@ -82,7 +84,7 @@ namespace ATO_API.Config
                         src.OCOPSells != null
                             ? src.OCOPSells
                                 .Where(s => s.ExpiryDate == null || s.ExpiryDate > DateTime.UtcNow)
-                                .Sum(s => s.SellVolume) 
+                                .Sum(s => s.SellVolume)
                             : 0));
 
                 // OCOPSell
@@ -121,7 +123,7 @@ namespace ATO_API.Config
                 config.CreateMap<AgriculturalTourPackage, AgriculturalTourPackageRespone>();
                 config.CreateMap<AgriculturalTourPackageRequest, AgriculturalTourPackage>();
                 config.CreateMap<AgriculturalTourPackage, AgriculturalTourPackageRespone_Guest>();
-                 
+
                 // TourDestination
                 config.CreateMap<TourDestination, AgriculturalTourPackage_TourDestination_Respone>();
                 config.CreateMap<TourDestination, AgriculturalTourPackage_TourDestination_Respone_Guest>();
@@ -133,7 +135,7 @@ namespace ATO_API.Config
                             src.OrderDetails.Sum(od => od.UnitPrice * od.Quantity)))
                     .ForMember(dest => dest.TotalShip,
                         opt => opt.MapFrom(src =>
-                            src.TotalAmount - (double) src.OrderDetails.Sum(od => od.UnitPrice * od.Quantity)));
+                            src.TotalAmount - (double)src.OrderDetails.Sum(od => od.UnitPrice * od.Quantity)));
 
                 config.CreateMap<OrderRequest, Order>();
                 // OrderDetail
@@ -147,8 +149,12 @@ namespace ATO_API.Config
                 config.CreateMap<VNPayPaymentResponse, VNPayPaymentResponse_History_Order>()
                 .ForMember(dest => dest.Order, opt => opt.MapFrom(src => src.Order))
                 .ForPath(dest => dest.Order.Customer, opt => opt.MapFrom(src => src.Order.Account));
+
                 // BookingAgriculturalTour
-                config.CreateMap<BookingAgriculturalTour, BookingAgriculturalTourRespone>();
+                config.CreateMap<BookingAgriculturalTour, BookingAgriculturalTourRespone>()
+                  .ForMember(dest => dest.TotalBookedPeople,
+                        opt => opt.MapFrom(src => src.NumberOfAdults + src.NumberOfChildren));
+
                 config.CreateMap<BookingAgriculturalTourRequest, BookingAgriculturalTour>();
                 // Feedback
                 config.CreateMap<Feedback, FeedbackRespone>();
@@ -156,6 +162,28 @@ namespace ATO_API.Config
                 // ShipAddress
                 config.CreateMap<ShipAddress, ShipAddressRespone>();
                 config.CreateMap<ShipAddressRequest, ShipAddress>();
+                config.CreateMap<AddShipAddressRequest, ShipAddress>();
+
+                config.CreateMap<Account, ProfileResponse>();
+
+
+                config.CreateMap<AgriculturalTourPackage, TourGuidePackageResponse>()
+                    .ForMember(dest => dest.TourName, opt => opt.MapFrom(x => x.PackageName))
+                    .ForMember(dest => dest.TotalBookedPeople, opt => opt.MapFrom(src =>
+                        src.BookingAgriculturalTours!.Sum(b => b.NumberOfAdults + b.NumberOfChildren)))
+                    .ForMember(dest => dest.BookedTours, opt => opt.MapFrom(src =>
+                        src.BookingAgriculturalTours!.Where(b => b.PaymentStatus == PaymentStatus.Paid)));
+
+                config.CreateMap<TourDestination, TourDestinationResponse>()
+                    .ForMember(dest => dest.Name, opt => opt.MapFrom(src =>
+                        src.Activity != null ? src.Activity.ActivityName : src.Accommodation!.AccommodationName))
+                    .ForMember(dest => dest.Address, opt => opt.MapFrom(src =>
+                        src.Activity != null ? src.Activity.Location : src.Accommodation!.Address))
+                    .ForMember(dest => dest.Type, opt => opt.MapFrom(src =>
+                        src.Activity != null ? "Activity" : "Accommodation"));
+
+                config.CreateMap<BookingAgriculturalTour, BookedTourResponse>();
+
             });
 
             return mapperConfig.CreateMapper();

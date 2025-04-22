@@ -3,24 +3,14 @@ using Data.DTO.Respone;
 using Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
-using Nest;
 using Service.EmailSer;
-using Service.Repository;
-using Service.TourCompanySer;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
-using System.Security.Principal;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Service.AccountSer
 {
@@ -257,6 +247,43 @@ namespace Service.AccountSer
                 Message = "Đổi mật khẩu thành công!"
             };
         }
+
+        public async Task<ResponseModel> ChangePassword(string? id, string currentPassword, string newPassword)
+        {
+            try
+            {
+                if (id == null)
+                    throw new Exception("Không tìm thấy tài khoản");
+
+                var user = await _userManager.FindByIdAsync(id);
+                if (user == null)
+                    throw new Exception("Không tìm thấy tài khoản");
+
+
+                if(!await _userManager.CheckPasswordAsync(user, currentPassword))
+                {
+                    throw new Exception("Mật khẩu cũ không chính xác");
+
+                }
+                if (!IsValidPassword(newPassword))
+                    throw new Exception("Mật khẩu mới phải chứa ít nhất một ký tự in hoa, một ký tự thường, một số và một ký tự đặc biệt.");
+
+                var resetPasswordResult = await _userManager.RemovePasswordAsync(user);
+                if (!resetPasswordResult.Succeeded)
+                    throw new Exception("Đã xảy ra lỗi, vui lòng thử lại sau!");
+
+                var result = await _userManager.AddPasswordAsync(user, newPassword);
+                if (!result.Succeeded)
+                    throw new Exception("Đặt lại mật khẩu không thành công!");
+
+                return new ResponseModel(true, "Đổi mật khẩu thành công!");
+            }
+            catch (Exception ex)
+            {
+                return new ResponseModel(false, ex.Message);
+            }
+        }
+
         // Phương thức kiểm tra mật khẩu mới
         private bool IsValidPassword(string password)
         {
@@ -295,6 +322,15 @@ namespace Service.AccountSer
             return await _accountRepository.Query()
                    .FirstOrDefaultAsync(a => a.PhoneNumber == phoneNumber);
         }
+
+        public async Task<bool> AnyAccountByEmailAsync(string email)
+            => await _accountRepository.Query().AnyAsync(a => a.Email == email);
+
+        public async Task<bool> AnyAccountByUsernameAsync(string username)
+            => await _accountRepository.Query().AnyAsync(a => a.UserName == username);
+
+        public async Task<bool> AnyAccountByPhoneAsync(string phone)
+           => await _accountRepository.Query().AnyAsync(a => a.PhoneNumber == phone);
 
         public async Task<IEnumerable<Account>> GetUnassignedTourCompaniesAsync()
         {
