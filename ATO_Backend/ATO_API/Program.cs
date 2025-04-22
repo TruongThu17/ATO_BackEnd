@@ -21,7 +21,11 @@ using Service.AdminBalanceSer;
 using Service.AgriculturalTourPackageSer;
 using Service.BlogSer;
 using Service.BookingSer;
+
+using Service.ContractSer;
+
 using Service.BookingTourDestinationSer;
+
 using Service.DriverSer;
 using Service.EmailSer;
 using Service.FeedbackSer;
@@ -214,9 +218,14 @@ builder.Services.AddScoped<IRepository<Feedback>, Repository<Feedback>>();
 builder.Services.AddScoped<IShipAddressService, ShipAddressService>();
 builder.Services.AddScoped<IRepository<ShipAddress>, Repository<ShipAddress>>();
 
+//Contract 
+builder.Services.AddScoped<IContractService, ContractService>();
+builder.Services.AddScoped<IRepository<Contract>, Repository<Contract>>();
+
 // Addition
 builder.Services.AddRepositoryServices();
 builder.Services.AddServices();
+
 
 // app
 var app = builder.Build();

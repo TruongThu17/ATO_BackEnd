@@ -233,6 +233,32 @@ public class OrderService : IOrderService
         {
             throw new Exception("Đã xảy ra lỗi vui lòng thử lại sau!");
         }
+        public async Task<List<VNPayPaymentResponse>> ListHistoryPayments()
+        {
+            try
+            {
+
+
+                return await _VNPayPaymentResponseRepository.Query()
+                    .Include(x => x.Order)
+                        .ThenInclude(o => o.Account)
+                    .Include(x => x.Order)
+                        .ThenInclude(o => o.OrderDetails)
+                            .ThenInclude(od => od.Product)
+                     .Include(x => x.Order)
+                        .ThenInclude(o => o.Account)
+                     .Include(x => x.BookingAgriculturalTour)
+                        .ThenInclude(x => x.AgriculturalTourPackage)
+                    .Include(x => x.BookingAgriculturalTour)
+                        .ThenInclude(x => x.Customer)
+                    .OrderByDescending(x => x.PayDate)
+                    .ToListAsync();
+            }
+            catch (Exception)
+            {
+                throw new Exception("Đã xảy ra lỗi, vui lòng thử lại sau!");
+            }
+        }
 
     }
     public async Task<List<VNPayPaymentResponse>> ListHistoryPaymentsOrder(Guid UserId)
@@ -242,6 +268,7 @@ public class OrderService : IOrderService
             // Lấy TouristFacility theo UserId
             var touristFacility = await _touristFacilityRepository.Query()
                 .SingleOrDefaultAsync(x => x.UserId == UserId);
+
 
             if (touristFacility == null)
                 return new List<VNPayPaymentResponse>();
