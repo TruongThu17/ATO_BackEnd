@@ -13,12 +13,11 @@ using Service.DriverSer;
 using Service.TourGuideSer;
 using System.Text.RegularExpressions;
 
-namespace ATO_API.Controllers.Admin
+namespace ATO_API.Controllers.AFTO
 {
-    //[Guid("D66F7410-19D2-46D7-9C78-80C95BF57C8E")]
-    [Route("api/admin/contract")]
+    [Route("api/afto/contract")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "AgriculturalTourismFacilityOwners")]
     public class ContractController : ControllerBase
     {
         private readonly IContractService _contractService;
@@ -39,8 +38,8 @@ namespace ATO_API.Controllers.Admin
         {
             try
             {
-
-                var response = await _contractService.ListContract();
+                var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                var response = await _contractService.ListContractFacility(Guid.Parse(userId));
 
                 return Ok(response);
             }
@@ -72,43 +71,67 @@ namespace ATO_API.Controllers.Admin
                 });
             }
         }
-        [HttpPost("add-contract")]
-        [ProducesResponseType(typeof(Contract), StatusCodes.Status200OK)]
+
+        [HttpPost("send-otp/{contractId}")]
+        [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseVM), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AddContract([FromBody] Contract Contract)
+        public async Task<IActionResult> SendOTP(Guid contractId)
         {
             try
             {
-                var response = await _contractService.AddContract(Contract);
-                return Ok(response);
+                var response = await _contractService.SendOTPAsync(contractId);
+                if (!response)
+                {
+                    return BadRequest(new ResponseVM
+                    {
+                        Status = false,
+                        Message = "Không thể gửi mã OTP"
+                    });
+                }
+                return Ok(new ResponseVM
+                {
+                    Status = true,
+                    Message = "Đã gửi mã OTP thành công"
+                });
             }
             catch (Exception ex)
             {
                 return StatusCode(500, new ResponseVM
                 {
                     Status = false,
-                    Message = ex.Message,
+                    Message = ex.Message
                 });
             }
         }
-        [HttpPut("update-contract/{ContractId}")]
-        [ProducesResponseType(typeof(DriverRequest), StatusCodes.Status200OK)]
+
+        [HttpPut("sign-contract/{contractId}")]
+        [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseVM), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateDriver(Guid DriverId, [FromBody] DriverRequest DriverRequest)
+        public async Task<IActionResult> SignContract(Guid contractId)
         {
             try
             {
-                var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-                var responseResult = _mapper.Map<Driver>(DriverRequest);
-                var response = await _driverService.UpdateDriver(DriverId, responseResult);
-                return Ok(DriverRequest);
+                var response = await _contractService.SignContractAsync(contractId);
+                if (!response)
+                {
+                    return BadRequest(new ResponseVM
+                    {
+                        Status = false,
+                        Message = "Không thể ký hợp đồng"
+                    });
+                }
+                return Ok(new ResponseVM
+                {
+                    Status = true,
+                    Message = "Ký hợp đồng thành công"
+                });
             }
             catch (Exception ex)
             {
                 return StatusCode(500, new ResponseVM
                 {
                     Status = false,
-                    Message = ex.Message,
+                    Message = ex.Message
                 });
             }
         }

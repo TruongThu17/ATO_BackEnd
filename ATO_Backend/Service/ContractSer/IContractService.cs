@@ -14,5 +14,9 @@ namespace Service.ContractSer
         Task<Contract> GetContract(Guid ContractId);
         Task<bool> AddContract(Contract Contract);
         Task<bool> UpdateContract(Guid ContractId, Contract Contract);
+        Task<List<Contract>> ListContractTourCompany(Guid userId);
+        Task<bool> SendOTPAsync(Guid contractId);
+        Task<bool> SignContractAsync(Guid contractId);
+        Task<List<Data.Models.Contract>> ListContractFacility(Guid userId);
     }
 }
