@@ -1,4 +1,4 @@
-using Data.Models;
+﻿using Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.WithdrawalSer;
@@ -40,6 +40,14 @@ public class WithdrawalController(IWithdrawalService withdrawalService) : Contro
     public async Task<IActionResult> GetPendingRequests()
     {
         var requests = await withdrawalService.GetAllPendingRequests();
+        return Ok(requests);
+    }
+    // lịch sử giải ngân của admin 
+    [HttpGet("history")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetHistoryRequests()
+    {
+        var requests = await withdrawalService.GetWithdrawalHistory_Admin();
         return Ok(requests);
     }
 
