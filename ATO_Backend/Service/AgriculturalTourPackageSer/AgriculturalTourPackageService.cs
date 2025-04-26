@@ -11,12 +11,14 @@ namespace Service.AgriculturalTourPackageSer
         private readonly IRepository<TourCompany> _tourCompanyRepository;
         private readonly IRepository<TourGuide> _tourGuideRepository;
         private readonly IRepository<BookingAgriculturalTour> _bookingRepository;
+        private readonly IRepository<BookingTourDestination> _bookingTourDestinationRepo;
         public AgriculturalTourPackageService(
             IRepository<AgriculturalTourPackage> agriculturalTourPackageRepository,
             IRepository<TourCompany> tourCompanyRepository,
             IRepository<TourGuide> tourGuideRepository,
             IRepository<TourDestination> tourDestinationRepository,
-            IRepository<BookingAgriculturalTour> bookingRepository
+            IRepository<BookingAgriculturalTour> bookingRepository,
+            IRepository<BookingTourDestination> bookingTourDestinationRepo
             )
         {
             _agriculturalTourPackageRepository = agriculturalTourPackageRepository;
@@ -24,6 +26,7 @@ namespace Service.AgriculturalTourPackageSer
             _tourGuideRepository = tourGuideRepository;
             _tourDestinationRepository = tourDestinationRepository;
             _bookingRepository = bookingRepository;
+            _bookingTourDestinationRepo = bookingTourDestinationRepo;
         }
 
         public async Task<bool> CreateAgriculturalTourPackage(AgriculturalTourPackage newTour, Guid UserId)
@@ -105,7 +108,7 @@ namespace Service.AgriculturalTourPackageSer
                     throw new Exception("Không tìm thấy gói du lịch!");
 
 
-                existing.StatusActive = status == StatusApproval.Approved 
+                existing.StatusActive = status == StatusApproval.Approved
                     ? StatusActive.active : StatusActive.inactive;
 
                 if (existing.TourDestinations is not null)
@@ -207,7 +210,7 @@ namespace Service.AgriculturalTourPackageSer
         {
             try
             {
-         
+
                 return await _agriculturalTourPackageRepository.Query()
                      .Include(x => x.TourDestinations)
                         .ThenInclude(b => b.TourismPackage)
@@ -362,6 +365,7 @@ namespace Service.AgriculturalTourPackageSer
         #region private 
         private async Task AddTourDestinations(ICollection<TourDestination>? destinations, Guid tourId)
         {
+            await RemoveBookedTourDestinations(tourId);
             await RemoveTourDestinations(tourId);
             if (destinations is null) return;
             foreach (var des in destinations)
@@ -370,12 +374,21 @@ namespace Service.AgriculturalTourPackageSer
             }
         }
 
-        private async Task RemoveTourDestinations( Guid tourId)
+        private async Task RemoveBookedTourDestinations(Guid tourId)
+        {
+            var bookedDestinations = await _bookingTourDestinationRepo.Query().Where(x => x.TourId == tourId).ToListAsync();
+            foreach (var des in bookedDestinations)
+            {
+                await _bookingTourDestinationRepo.DeleteAsync(des.TourDestinationId);
+            }
+        }
+
+        private async Task RemoveTourDestinations(Guid tourId)
         {
             var destinations = await _tourDestinationRepository.Query()
                 .Where(x => x.TourId == tourId).ToListAsync();
 
-            foreach(var des in destinations)
+            foreach (var des in destinations)
             {
                 await _tourDestinationRepository.DeleteAsync(des.TourDestinationId);
             }
