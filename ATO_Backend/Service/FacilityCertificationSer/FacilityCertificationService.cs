@@ -1,8 +1,6 @@
 using Data.Models;
-using Data.Repository;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Service.Repository;
 
 namespace Service.FacilityCertificationSer;
 
@@ -73,11 +71,17 @@ public class FacilityCertificationService(IRepository<FacilityCertification> cer
         var certification = await _certificationRepo.GetByIdAsync(id);
         if (certification == null) return false;
 
-        certification.StatusApproval = StatusApproval.Rejected;
+        certification.StatusApproval = StatusApproval.Reject;
         certification.ReplyRequest = reply;
         certification.UpdateDate = DateTime.UtcNow;
 
         await _certificationRepo.UpdateAsync(certification);
         return true;
+    }
+
+    public async Task<List<FacilityCertification>> GetAll()
+    {
+        return await _certificationRepo.Query()
+            .ToListAsync();
     }
 }
