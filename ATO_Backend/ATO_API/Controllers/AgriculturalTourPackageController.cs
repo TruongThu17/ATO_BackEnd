@@ -2,6 +2,7 @@
 using Data.DTO.Respone;
 using Microsoft.AspNetCore.Mvc;
 using Nest;
+using Service;
 using Service.AgriculturalTourPackageSer;
 
 namespace ATO_API.Controllers
@@ -11,14 +12,17 @@ namespace ATO_API.Controllers
     public class AgriculturalTourPackageController : ControllerBase
     {
         private readonly IAgriculturalTourPackageService _agriculturalTourPackageService;
+        private readonly IGeneralService _service;
         private readonly IMapper _mapper;
 
         public AgriculturalTourPackageController(
              IMapper mapper,
-             IAgriculturalTourPackageService agriculturalTourPackageService
+             IAgriculturalTourPackageService agriculturalTourPackageService,
+             IGeneralService service
         )
         {
             _mapper = mapper;
+            _service = service;
             _agriculturalTourPackageService = agriculturalTourPackageService;
         }
         [HttpGet("get-list-agricultural-tour-packages")]
@@ -33,10 +37,15 @@ namespace ATO_API.Controllers
 
                 var result = new List<AgriculturalTourPackageRespone_Guest>();
 
-                foreach ( var item in responseResult )
+                foreach (var item in responseResult)
                 {
-                    item.People = await  _agriculturalTourPackageService.GetPeople(item.TourId);
-                    result.Add(item);
+                    item.People = await _agriculturalTourPackageService.GetPeople(item.TourId);
+
+                    var isStarted = await _service.IsTourStarted(item.TourId);
+                    if (isStarted is false)
+                    {
+                        result.Add(item);
+                    }
                 }
 
                 return Ok(result);
@@ -72,7 +81,7 @@ namespace ATO_API.Controllers
                 });
             }
         }
-        
+
         [HttpGet("get-tour-destination/{TourDestinationId}")]
         [ProducesResponseType(typeof(AgriculturalTourPackage_TourDestination_Respone), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseVM), StatusCodes.Status500InternalServerError)]
@@ -96,6 +105,6 @@ namespace ATO_API.Controllers
 
 
 
-        
+
     }
 }
