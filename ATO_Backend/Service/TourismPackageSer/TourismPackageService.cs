@@ -43,7 +43,7 @@ namespace Service.TourismPackageSer
 
                 var package = await _tourismPackageRepository.GetByIdAsync(responseResult.PackageId ?? Guid.Empty);
 
-                if(package is not null)
+                if (package is not null)
                 {
                     package.StatusApproval = StatusApproval.Processing;
                     await _tourismPackageRepository.UpdateAsync(package);
@@ -208,6 +208,7 @@ namespace Service.TourismPackageSer
                 existingActivity.BreakTimeInMinutesType = responseResult.BreakTimeInMinutesType;
                 existingActivity.PackageId = responseResult.PackageId;
                 existingActivity.UpdateDate = DateTime.UtcNow;
+                existingActivity.MaxCapacity = responseResult.MaxCapacity;
                 existingActivity.Products?.Clear();
                 if (existingActivity.Products == null)
                 {
