@@ -43,8 +43,6 @@ public class BookingService(
             {
 
                 tour.PaymentStatus = PaymentStatus.Paid;
-                tour.StatusBooking = StatusBooking.Completed;
-                tourexist.Slot = (int)(tourexist.Slot - (tour.NumberOfAdults + tour.NumberOfChildren));
 
                 // Add to admin balance
                 await _adminBalanceService.AddBookingTransaction(tour);
@@ -115,10 +113,32 @@ public class BookingService(
     public async Task BookingAccept(BookingAccept bookingAccept)
     {
         var booking = await _bookingAgriculturalTourRepository.Query()
-                .SingleOrDefaultAsync(x => x.BookingId == bookingAccept.BookingId);
+            .Where(x => x.GroupId == bookingAccept.TourId)
+            .ToListAsync();
 
-        booking.StatusBooking = bookingAccept.StatusBooking;
-        await _bookingAgriculturalTourRepository.UpdateAsync(booking);
+
+        // TODO: refund user if cancel tour
+        if (bookingAccept.StatusBooking == StatusBooking.Completed || bookingAccept.StatusBooking == StatusBooking.Canceled)
+        {
+            var tourId = booking.FirstOrDefault()?.TourId;
+
+            var tour = await _agriculturalTourPackageRepository
+                .Query()
+                .Include(x => x.TourGuides)
+                .Where(x => x.TourId == tourId)
+                .FirstOrDefaultAsync();
+
+            if(tour is not null)
+            {
+                tour.TourGuides = null;
+                await _agriculturalTourPackageRepository.UpdateAsync(tour);
+            }
+        }
+
+
+
+        booking.ForEach(x => x.StatusBooking = bookingAccept.StatusBooking);
+        await _bookingAgriculturalTourRepository.RealUpdateRangeAsync(booking);
     }
 
     public async Task<BookingAgriculturalTour> GetBookTourDetails(Guid BookingId)
@@ -198,11 +218,11 @@ public class BookingService(
             throw new Exception("Đã xảy ra lỗi vui lòng thử lại sau!");
         }
     }
-    public async Task UpdateStatus(Guid bookingId,int paymentStatus, StatusBooking canceled)
+    public async Task UpdateStatus(Guid bookingId, int paymentStatus, StatusBooking canceled)
     {
         var order = await _bookingAgriculturalTourRepository.Query()
                 .SingleOrDefaultAsync(x => x.BookingId == bookingId);
-        if (order == null) 
+        if (order == null)
             throw new Exception("Order not found");
         order.StatusBooking = canceled;
         order.PaymentStatus = (PaymentStatus)paymentStatus;
