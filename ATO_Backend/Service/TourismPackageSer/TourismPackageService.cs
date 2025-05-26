@@ -7,6 +7,7 @@ namespace Service.TourismPackageSer
     public class TourismPackageService : ITourismPackageService
     {
         private readonly IRepository<TourismPackage> _tourismPackageRepository;
+        private readonly IRepository<AgriculturalTourPackage> _agriculturalTourPackageRepository;
         private readonly IRepository<TouristFacility> _touristFacilityRepository;
         private readonly IRepository<Activity> _activityRepository;
         private readonly IRepository<Product> _productRepository;
@@ -14,12 +15,14 @@ namespace Service.TourismPackageSer
             IRepository<TourismPackage> tourismPackageRepository,
             IRepository<TouristFacility> touristFacilityRepository,
             IRepository<Activity> activityRepository,
-            IRepository<Product> productRepository)
+            IRepository<Product> productRepository,
+            IRepository<AgriculturalTourPackage> agriculturalTourPackageRepository)
         {
             _tourismPackageRepository = tourismPackageRepository;
             _touristFacilityRepository = touristFacilityRepository;
             _activityRepository = activityRepository;
             _productRepository = productRepository;
+            _agriculturalTourPackageRepository = agriculturalTourPackageRepository;
         }
 
         public async Task<bool> CreateActivity_AFTO(Activity responseResult)
@@ -39,6 +42,25 @@ namespace Service.TourismPackageSer
 
                     responseResult.Products = Products;
                 }
+
+
+                var package = await _tourismPackageRepository.GetByIdAsync(responseResult.PackageId ?? Guid.Empty);
+
+                if (package is not null)
+                {
+                    package.StatusApproval = StatusApproval.Processing;
+                    await _tourismPackageRepository.UpdateAsync(package);
+                }
+
+                var existActivities = await _activityRepository.Query()
+                    .Where(x => x.PackageId == responseResult.PackageId).ToListAsync();
+
+                if (existActivities.Count > 0)
+                {
+                    existActivities.ForEach(x => x.StatusApproval = StatusApproval.Processing);
+                    await _activityRepository.RealUpdateRangeAsync(existActivities);
+                }
+
                 await _activityRepository.AddRangeAsync(responseResult);
 
                 return true;
@@ -96,6 +118,7 @@ namespace Service.TourismPackageSer
                     .Include(x => x.TourDestinations)
                     .Include(x => x.Activities)
                     .Where(x => x.TouristFacilityId == facility.TouristFacilityId)
+                    .OrderByDescending(x => x.CreateDate)
                     .ToListAsync();
             }
             catch (Exception)
@@ -111,6 +134,7 @@ namespace Service.TourismPackageSer
                     .Where(x => x.StatusOperating == StatusOperating.Active)
                     .Include(b => b.Activities)
                     .Include(b => b.TouristFacility)
+                    .OrderByDescending(x => x.CreateDate)
                     .ToListAsync();
             }
             catch (Exception)
@@ -127,6 +151,7 @@ namespace Service.TourismPackageSer
                     .Include(b => b.TouristFacility)
                     .Include(b => b.Activities)
                     .ThenInclude(b => b.Products)
+                    .OrderByDescending(x => x.CreateDate)
                     .ToListAsync();
             }
             catch (Exception)
@@ -186,6 +211,7 @@ namespace Service.TourismPackageSer
                 existingActivity.BreakTimeInMinutesType = responseResult.BreakTimeInMinutesType;
                 existingActivity.PackageId = responseResult.PackageId;
                 existingActivity.UpdateDate = DateTime.UtcNow;
+                existingActivity.MaxCapacity = responseResult.MaxCapacity;
                 existingActivity.Products?.Clear();
                 if (existingActivity.Products == null)
                 {
@@ -244,6 +270,7 @@ namespace Service.TourismPackageSer
             try
             {
                 var exist = await _tourismPackageRepository.Query()
+                    .Include(x => x.Activities)
                     .SingleOrDefaultAsync(x => x.PackageId == packageId);
 
                 if (exist == null)
@@ -272,6 +299,14 @@ namespace Service.TourismPackageSer
             {
                 throw new Exception("Đã xảy ra lỗi vui lòng thử lại sau!");
             }
+        }
+
+        public async Task<int?> CountCurrentCapacityAsync(Guid activityId)
+        {
+            return  _agriculturalTourPackageRepository.Query()
+                   .Include(x => x.TourDestinations)
+                   .Where(x => x.TourDestinations!.Select(x => x.ActivityId).Contains(activityId))
+                   .Count();
         }
     }
 }

@@ -3,29 +3,24 @@
 using ATO_API.Config;
 using ATO_API.Extensions;
 using ATO_API.Helper;
+using ATO_API.HostedServices;
 using Data.ArmsContext;
-using Data.DTO.Request;
 using Data.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Service.AboutSer;
 using Service.AccommodationSer;
 using Service.AccountSer;
-using Service.AdminBalanceSer;
 using Service.AgriculturalTourPackageSer;
+using Service.BankAccountSer;
 using Service.BlogSer;
 using Service.BookingSer;
-
 using Service.ContractSer;
-
-using Service.BookingTourDestinationSer;
-
+using Service.DashboardSer;
 using Service.DriverSer;
 using Service.EmailSer;
 using Service.FeedbackSer;
@@ -41,7 +36,6 @@ using Service.TourismPackageSer;
 using Service.TouristFacilitySer;
 using Service.UserSupportSer;
 using Service.VnPaySer;
-using Service.WithdrawalSer;
 using StackExchange.Redis;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -217,14 +211,18 @@ builder.Services.AddScoped<IRepository<Feedback>, Repository<Feedback>>();
 //ShipAddress 
 builder.Services.AddScoped<IShipAddressService, ShipAddressService>();
 builder.Services.AddScoped<IRepository<ShipAddress>, Repository<ShipAddress>>();
-
 //Contract 
+builder.Services.AddScoped<IBankAccountService, BankAccountService>();
+builder.Services.AddScoped<IRepository<BankAccount>, Repository<BankAccount>>();
 builder.Services.AddScoped<IContractService, ContractService>();
 builder.Services.AddScoped<IRepository<Contract>, Repository<Contract>>();
-
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 // Addition
 builder.Services.AddRepositoryServices();
 builder.Services.AddServices();
+
+// Add after builder.Services.AddServices();
+builder.Services.AddHostedService<MonthlyWithdrawalService>();
 
 
 // app
@@ -246,3 +244,4 @@ app.UseStaticFiles();
 app.MapControllers();
 
 app.Run();
+

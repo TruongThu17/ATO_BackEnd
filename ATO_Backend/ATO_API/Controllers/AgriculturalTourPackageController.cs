@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
-using Data.DTO.Request;
 using Data.DTO.Respone;
-using Data.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Service.AccommodationSer;
+using Nest;
+using Service;
 using Service.AgriculturalTourPackageSer;
 
 namespace ATO_API.Controllers
@@ -15,14 +12,17 @@ namespace ATO_API.Controllers
     public class AgriculturalTourPackageController : ControllerBase
     {
         private readonly IAgriculturalTourPackageService _agriculturalTourPackageService;
+        private readonly IGeneralService _service;
         private readonly IMapper _mapper;
 
         public AgriculturalTourPackageController(
              IMapper mapper,
-             IAgriculturalTourPackageService agriculturalTourPackageService
+             IAgriculturalTourPackageService agriculturalTourPackageService,
+             IGeneralService service
         )
         {
             _mapper = mapper;
+            _service = service;
             _agriculturalTourPackageService = agriculturalTourPackageService;
         }
         [HttpGet("get-list-agricultural-tour-packages")]
@@ -35,8 +35,20 @@ namespace ATO_API.Controllers
                 var response = await _agriculturalTourPackageService.GetListAgriculturalTourPackages_Guest();
                 var responseResult = _mapper.Map<List<AgriculturalTourPackageRespone_Guest>>(response);
 
+                var result = new List<AgriculturalTourPackageRespone_Guest>();
 
-                return Ok(responseResult);
+                foreach (var item in responseResult)
+                {
+                    item.People = await _agriculturalTourPackageService.GetPeople(item.TourId );
+
+                    var isStarted = await _service.IsTourStarted(item.TourId);
+                    if (isStarted is false && item.EndTime > DateTime.Now)
+                    {
+                        result.Add(item);
+                    }
+                }
+
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -54,8 +66,10 @@ namespace ATO_API.Controllers
         {
             try
             {
-                var response = await _agriculturalTourPackageService.GetAgriculturalTourPackage_Guest(TourId);
-                var responseResult = _mapper.Map<AgriculturalTourPackageRespone_Guest>(response);
+                var response = await _agriculturalTourPackageService.GetAgriculturalTourPackage(TourId);
+                var responseResult = _mapper.Map<AgriculturalTourPackageRespone>(response);
+                responseResult.People = await _agriculturalTourPackageService.GetPeople(TourId);
+
                 return Ok(responseResult);
             }
             catch (Exception ex)
@@ -67,7 +81,7 @@ namespace ATO_API.Controllers
                 });
             }
         }
-        
+
         [HttpGet("get-tour-destination/{TourDestinationId}")]
         [ProducesResponseType(typeof(AgriculturalTourPackage_TourDestination_Respone), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseVM), StatusCodes.Status500InternalServerError)]
@@ -88,6 +102,9 @@ namespace ATO_API.Controllers
                 });
             }
         }
-        
+
+
+
+
     }
 }

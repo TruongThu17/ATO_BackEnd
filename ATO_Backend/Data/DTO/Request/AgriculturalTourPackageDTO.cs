@@ -19,7 +19,9 @@ namespace Data.DTO.Request
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public double Durations { get; set; }
+        public string? GatheringLocation { get; set; }
         public TimeType DurationsType { get; set; }
+        public StatusActive? StatusActive { get; set; }
         public virtual ICollection<AgriculturalTourPackageRequest_TourGuides>? TourGuides { get; set; }
         public virtual ICollection<TourDestinationRequest>? TourDestinations { get; set; }
     }

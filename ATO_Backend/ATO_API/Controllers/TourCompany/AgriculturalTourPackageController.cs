@@ -3,10 +3,9 @@ using Data.DTO.Request;
 using Data.DTO.Respone;
 using Data.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Service.AccommodationSer;
 using Service.AgriculturalTourPackageSer;
+using Service.BookingSer;
 
 namespace ATO_API.Controllers.TourCompany
 {
@@ -17,14 +16,17 @@ namespace ATO_API.Controllers.TourCompany
     {
         private readonly IAgriculturalTourPackageService _agriculturalTourPackageService;
         private readonly IMapper _mapper;
+        private readonly IBookingService _bookingService;
 
         public AgriculturalTourPackageController(
              IMapper mapper,
-             IAgriculturalTourPackageService agriculturalTourPackageService
+             IAgriculturalTourPackageService agriculturalTourPackageService,
+             IBookingService bookingService
         )
         {
             _mapper = mapper;
             _agriculturalTourPackageService = agriculturalTourPackageService;
+            _bookingService = bookingService;
         }
         [HttpGet("get-list-agricultural-tour-packages")]
         [ProducesResponseType(typeof(List<AgriculturalTourPackageRespone>), StatusCodes.Status200OK)]
@@ -34,7 +36,7 @@ namespace ATO_API.Controllers.TourCompany
             try
             {
                 var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-                var response = await _agriculturalTourPackageService.GetListAgriculturalTourPackages(Guid.Parse(userId));
+                var response = await _agriculturalTourPackageService.GetListAgriculturalTourPackages(Guid.Parse(userId!));
                 var responseResult = _mapper.Map<List<AgriculturalTourPackageRespone>>(response);
 
 
@@ -93,14 +95,22 @@ namespace ATO_API.Controllers.TourCompany
         [HttpPut("update-agricultural-tour-package/{TourId}")]
         [ProducesResponseType(typeof(TourGuideRespone), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ResponseVM), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateAgriculturalTourPackage(Guid TourId, [FromBody] AgriculturalTourPackageRequest AgriculturalTourPackageRequest)
+        public async Task<IActionResult> UpdateAgriculturalTourPackage(Guid TourId, [FromBody] AgriculturalTourPackageRequest request)
         {
             try
             {
+
                 var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-                var responseResult = _mapper.Map<AgriculturalTourPackage>(AgriculturalTourPackageRequest);
+                var bookedTours = await _bookingService.ListTourBookingTour_TourCompany(Guid.Parse(userId!));
+
+                if (bookedTours.Any(x => x.TourId == TourId) && request.StatusActive == StatusActive.inactive)
+                {
+                    return Ok(new { status = false, message = "Đã có người đặt tour không thể ngừng hoạt động" });
+                }
+
+                var responseResult = _mapper.Map<AgriculturalTourPackage>(request);
                 var response = await _agriculturalTourPackageService.UpdateAgriculturalTourPackage(TourId, responseResult);
-                return Ok(AgriculturalTourPackageRequest);
+                return Ok(request);
             }
             catch (Exception ex)
             {

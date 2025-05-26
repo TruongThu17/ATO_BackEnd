@@ -18,12 +18,18 @@ namespace Data.DTO.Respone
         public TimeType DurationsType { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime? UpdateDate { get; set; }
+        public StatusActive? StatusActive { get; set; }
+        public string? GatheringLocation { get; set; }
+        public Guid? GroupId { get; set; }
         public virtual ICollection<AgriculturalTourPackage_TourDestination_Respone>? TourDestinations { get; set; }
         public virtual ICollection<AgriculturalTourPackage_TourGuide_Respone>? TourGuides { get; set; }
+        public virtual ICollection<BookingTourDestination>? Trackings { get; set; }
+        public int People { get; set; }
+
     }
     public class AgriculturalTourPackage_TourDestination_Respone
     {
-         public Guid TourDestinationId { get; set; }
+        public Guid TourDestinationId { get; set; }
         public string Title { get; set; }
         public string? Description { get; set; }
         public DateTime CreateDate { get; set; }
@@ -80,8 +86,10 @@ namespace Data.DTO.Respone
         public DateTime EndTime { get; set; }
         public double Durations { get; set; }
         public TimeType DurationsType { get; set; }
-        public virtual ICollection<AgriculturalTourPackage_TourDestination_Respone_Guest>? TourDestinations { get; set; }
+        public Guid? GroupId { get; set; }
+        public virtual ICollection<AgriculturalTourPackage_TourDestination_Respone>? TourDestinations { get; set; }
         public virtual ICollection<AgriculturalTourPackage_TourGuide_Respone>? TourGuides { get; set; }
+        public int People { get; set; }
     }
     public class AgriculturalTourPackage_TourDestination_Respone_Guest
     {

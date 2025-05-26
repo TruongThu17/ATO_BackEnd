@@ -20,6 +20,11 @@ namespace Service.AgriculturalTourPackageSer
         Task<List<AgriculturalTourPackage>> GetAll();
         Task<AgriculturalTourPackage> GetAgriculturalTourPackage_Guest(Guid TourId);
         Task<bool> ProcessApproval(Guid id, StatusApproval status);
+        Task<int> GetPeople(Guid tourId);
+
+        Task<List<AgriculturalTourPackage>> GetAllByTourGuideAsync(Guid UserId);
+        Task AddTourGuides(List<Guid>? tourGuideIds, Guid tourId);
+        Task AddTourDestinations(ICollection<TourDestination>? destinations, Guid tourId);
 
     }
 }

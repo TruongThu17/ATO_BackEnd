@@ -28,7 +28,7 @@ namespace Data.Seeding
                 new IdentityRole<Guid>() { Id = Guid.Parse("6F8CDFBE-2D8F-4B5E-B767-194CBA66309A"), Name = "TourismCompanies", NormalizedName = "TOURISMCOMPANIES" },
                 new IdentityRole<Guid>() { Id = Guid.Parse("49E15EF3-2D88-4812-955F-D00859B3F7E3"), Name = "AgriculturalTourismFacilityOwners", NormalizedName = "AGRICULTURALTOURISMFACILITYOWNERS" },
                 new IdentityRole<Guid>() { Id = Guid.Parse("C78A64EB-5190-44C1-9886-CA707854B807"), Name = "Tourists", NormalizedName = "TOURISTS" },
-                new IdentityRole<Guid>() { Id = Guid.Parse("870DD1EC-C340-41EE-9088-0F3612F510CD"), Name = "TourGuides", NormalizedName = "TOURGUIDES" }    
+                new IdentityRole<Guid>() { Id = Guid.Parse("870DD1EC-C340-41EE-9088-0F3612F510CD"), Name = "TourGuides", NormalizedName = "TOURGUIDES" }
             );
             //Seed Account
             modelBuilder.Entity<Account>().HasData(
@@ -45,6 +45,7 @@ namespace Data.Seeding
                     SecurityStamp = Guid.NewGuid().ToString(),
                     Fullname = "Administrator",
                     isAccountActive = true,
+                    PhoneNumber = "0355881010"
                 },
                 //Content Moderators
                 new Account()
@@ -445,7 +446,7 @@ namespace Data.Seeding
                         isAccountActive = true
                     },
             #endregion
-#region ATFO
+            #region ATFO
                 new Account()
                 {
                     Id = Guid.Parse("A631BB94-66D8-44DB-932B-532892D87754"),
@@ -627,7 +628,7 @@ namespace Data.Seeding
                       SecurityStamp = Guid.NewGuid().ToString(),
                       Fullname = "Trang Trại Nông Sản Sạch Càng Long",
                       isAccountActive = true,
-                  },
+                  },// 49e15ef3-2d88-4812-955f-d00859b3f7e3
                   new Account()
                   {
                       Id = Guid.Parse("10000000-0000-0000-0000-000000000014"),
@@ -653,7 +654,8 @@ namespace Data.Seeding
                       SecurityStamp = Guid.NewGuid().ToString(),
                       Fullname = "Trang Trại Châu Đốc",
                       isAccountActive = true,
-                  }, 
+                  },
+
                   new Account()
                   {
                       Id = Guid.Parse("10000000-0000-0000-0000-000000000016"),
@@ -1019,6 +1021,7 @@ namespace Data.Seeding
                     SecurityStamp = Guid.NewGuid().ToString(),
                     Fullname = "Tourists",
                     isAccountActive = true,
+                    PhoneNumber = "0355881010"
                 },
                  new Account()
                  {
@@ -1045,6 +1048,7 @@ namespace Data.Seeding
                       SecurityStamp = Guid.NewGuid().ToString(),
                       Fullname = "Hoài Thu",
                       isAccountActive = true,
+                      PhoneNumber = "0355881011"
                   },
 
                 // Tour Guides
@@ -1060,6 +1064,7 @@ namespace Data.Seeding
                     SecurityStamp = Guid.NewGuid().ToString(),
                     Fullname = "TourGuides",
                     isAccountActive = true,
+                    PhoneNumber = "0355881012"
                 },
                  new Account
                  {
@@ -1075,14 +1080,15 @@ namespace Data.Seeding
                      Gender = true,
                      AvatarURL = "https://example.com/avatar1.jpg",
                      Dob = new DateTime(1990, 5, 15),
-                     isAccountActive = true
+                     isAccountActive = true,
+                     PhoneNumber = "0355881013"
                  },
                 new Account
                 {
                     Id = Guid.Parse("44444444-4444-4444-4444-444444444444"),
                     UserName = "EmmaWatson",
                     NormalizedUserName = "EMMAWATSON",
-                    Email = "emmawatson@example.com",
+                    Email = "emmawatson@example.com4",
                     NormalizedEmail = "EMMAWATSON@EXAMPLE.COM",
                     EmailConfirmed = true,
                     PasswordHash = new PasswordHasher<Account>().HashPassword(null, "A123@123a"),
@@ -1091,7 +1097,8 @@ namespace Data.Seeding
                     Gender = false,
                     AvatarURL = "https://example.com/avatar2.jpg",
                     Dob = new DateTime(1988, 8, 20),
-                    isAccountActive = true
+                    isAccountActive = true,
+                    PhoneNumber = "0355881014"
                 },
                 new Account
                 {
@@ -1107,7 +1114,8 @@ namespace Data.Seeding
                     Gender = true,
                     AvatarURL = "https://example.com/avatar3.jpg",
                     Dob = new DateTime(1985, 11, 10),
-                    isAccountActive = true
+                    isAccountActive = true,
+                    PhoneNumber = "0355881015"
                 },
                 new Account
                 {
@@ -1123,7 +1131,8 @@ namespace Data.Seeding
                     Gender = false,
                     AvatarURL = "https://example.com/avatar4.jpg",
                     Dob = new DateTime(1992, 3, 25),
-                    isAccountActive = true
+                    isAccountActive = true,
+                    PhoneNumber = "0355881016"
                 },
                 new Account
                 {
@@ -1139,7 +1148,8 @@ namespace Data.Seeding
                     Gender = true,
                     AvatarURL = "https://example.com/avatar5.jpg",
                     Dob = new DateTime(1995, 7, 30),
-                    isAccountActive = true
+                    isAccountActive = true,
+                    PhoneNumber = "0355881017"
                 },
                 new Account
                 {
@@ -1155,7 +1165,8 @@ namespace Data.Seeding
                     Gender = true,
                     AvatarURL = "https://example.com/avatar6.jpg",
                     Dob = new DateTime(1987, 6, 14),
-                    isAccountActive = true
+                    isAccountActive = true,
+                    PhoneNumber = "0355881018"
                 },
                 new Account
                 {
@@ -1171,7 +1182,8 @@ namespace Data.Seeding
                     Gender = false,
                     AvatarURL = "https://example.com/avatar7.jpg",
                     Dob = new DateTime(1993, 12, 5),
-                    isAccountActive = true
+                    isAccountActive = true,
+                    PhoneNumber = "0355881019"
                 },
                 new Account
                 {
@@ -1187,7 +1199,8 @@ namespace Data.Seeding
                     Gender = true,
                     AvatarURL = "https://example.com/avatar8.jpg",
                     Dob = new DateTime(1989, 2, 18),
-                    isAccountActive = true
+                    isAccountActive = true,
+                    PhoneNumber = "0355881020"
                 },
                 new Account
                 {
@@ -1203,7 +1216,8 @@ namespace Data.Seeding
                     Gender = false,
                     AvatarURL = "https://example.com/avatar9.jpg",
                     Dob = new DateTime(1994, 9, 8),
-                    isAccountActive = true
+                    isAccountActive = true,
+                    PhoneNumber = "0355881021"
                 }
                 );
             // Seed User in role
@@ -1212,7 +1226,7 @@ namespace Data.Seeding
                 new IdentityUserRole<Guid> { UserId = Guid.Parse("B8C777A9-55B9-4B3D-860A-D7B56E4C24B7"), RoleId = Guid.Parse("B8FD818F-63F1-49EE-BEC5-F7B66CAFBFCA") },
                 //Seed Content Moderators
                 new IdentityUserRole<Guid> { UserId = Guid.Parse("11A068D3-9AF4-484C-82A2-E2B5C9D8B5AB"), RoleId = Guid.Parse("0DAE2462-9EBD-452E-A89C-06D4B6025E68") },
-               
+
                 //Seed Tourism Companies
                 new IdentityUserRole<Guid> { UserId = Guid.Parse("053D18EF-BA0E-4141-B142-898D28FA9B5D"), RoleId = Guid.Parse("6F8CDFBE-2D8F-4B5E-B767-194CBA66309A") },
                 new IdentityUserRole<Guid> { UserId = Guid.Parse("D2C3E4F5-6789-0123-4567-89ABCDEF0123"), RoleId = Guid.Parse("6F8CDFBE-2D8F-4B5E-B767-194CBA66309A") },
@@ -1232,7 +1246,7 @@ namespace Data.Seeding
                 new IdentityUserRole<Guid> { UserId = Guid.Parse("C7E55065-CACD-4FDF-AE68-2A4BB8AE3375"), RoleId = Guid.Parse("6F8CDFBE-2D8F-4B5E-B767-194CBA66309A") },
                 new IdentityUserRole<Guid> { UserId = Guid.Parse("A173D7B4-E503-4508-892A-5D1A4901CD03"), RoleId = Guid.Parse("6F8CDFBE-2D8F-4B5E-B767-194CBA66309A") },
 
-                  //Seed unassigned Tourism Companies
+                //Seed unassigned Tourism Companies
                 new IdentityUserRole<Guid> { UserId = Guid.Parse("20000000-0000-0000-0000-000000000018"), RoleId = Guid.Parse("6F8CDFBE-2D8F-4B5E-B767-194CBA66309A") },
                 new IdentityUserRole<Guid> { UserId = Guid.Parse("20000000-0000-0000-0000-000000000019"), RoleId = Guid.Parse("6F8CDFBE-2D8F-4B5E-B767-194CBA66309A") },
                 new IdentityUserRole<Guid> { UserId = Guid.Parse("20000000-0000-0000-0000-000000000020"), RoleId = Guid.Parse("6F8CDFBE-2D8F-4B5E-B767-194CBA66309A") },

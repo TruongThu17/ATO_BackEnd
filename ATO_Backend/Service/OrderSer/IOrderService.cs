@@ -16,6 +16,7 @@ namespace Service.OrderSer
         Task<Order> GetOrderDetails(Guid OrderId);
         Task<Data.Models.Order> AddOrder(Order order);
         Task<bool> UpdateOrder(Guid OrderId, Order order);
+        Task UpdateOcopQuantity(Guid productId);
 
         // cart
         Task AddToCart(Guid userId, OrderDetail_Cart orderDetail);
@@ -29,5 +30,7 @@ namespace Service.OrderSer
         Task AcceptOrder(OrderAcceptRequest orderAcceptRequest);
         Task<List<VNPayPaymentResponse>> ListHistoryPaymentsOrder(Guid UserId);
         Task<List<VNPayPaymentResponse>> ListHistoryPayments();
+
+        Task<bool> UpdateStatus(Guid OrderId, StatusOrder statusOrder);
     }
 }

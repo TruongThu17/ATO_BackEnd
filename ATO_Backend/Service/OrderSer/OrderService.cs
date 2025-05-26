@@ -16,17 +16,20 @@ public class OrderService : IOrderService
     private readonly IRepository<OrderDetail> _orderDetailRepository;
     private readonly IRepository<Product> _productRepository;
     private readonly IRepository<TouristFacility> _touristFacilityRepository;
+    private readonly IRepository<OCOPSell> _OCOPSellRepository;
 
     private readonly IConnectionMultiplexer _redis;
     private readonly StackExchange.Redis.IDatabase _db;
 
     public OrderService(
+        IRepository<OCOPSell> OCOPSellRepository,
         IRepository<Data.Models.Order> orderRepository,
         IRepository<OrderDetail> orderDetailRepository,
         IRepository<TouristFacility> touristFacilityRepository,
         IConnectionMultiplexer redis,
         IRepository<Product> productRepository,
-        IRepository<Data.Models.VNPayPaymentResponse> vNPayPaymentResponseRepository)
+        IRepository<Data.Models.VNPayPaymentResponse> vNPayPaymentResponseRepository,
+     IAdminBalanceService adminBalanceService)
     {
         _orderRepository = orderRepository;
         _orderDetailRepository = orderDetailRepository;
@@ -35,7 +38,32 @@ public class OrderService : IOrderService
         _productRepository = productRepository;
         _VNPayPaymentResponseRepository = vNPayPaymentResponseRepository;
         _touristFacilityRepository = touristFacilityRepository;
+        _adminBalanceService = adminBalanceService;
+        _OCOPSellRepository = OCOPSellRepository;
     }
+
+
+    public async Task UpdateOcopQuantity(Guid productId)
+    {
+        try
+        {
+            var activeOcop = await _OCOPSellRepository.Query()
+                .Where(x => x.ProductId == productId)
+                .Where(x => x.ActiveStatus == true)
+                .FirstOrDefaultAsync();
+
+            if(activeOcop is not null && activeOcop?.SellVolume > 0)
+            {
+                activeOcop.SellVolume -= 1;
+                await _OCOPSellRepository.UpdateAsync(activeOcop);
+            }
+        }
+        catch (Exception)
+        {
+            throw new Exception("Đã xảy ra lỗi vui lòng thử lại sau!");
+        }
+    }
+
 
     public async Task<Data.Models.Order> AddOrder(Data.Models.Order order)
     {
@@ -161,6 +189,7 @@ public class OrderService : IOrderService
                 .Include(x => x.OrderDetails)
                 .ThenInclude(y => y.Product)
                 .Where(x => x.OrderDetails.Any(x => x.Product.TouristFacilityId == TouristFacility.TouristFacilityId))
+                .OrderByDescending(x => x.OrderDate)
                 .ToListAsync();
         }
         catch (Exception)
@@ -178,8 +207,28 @@ public class OrderService : IOrderService
         {
             var order = await _orderRepository.Query()
                    .SingleOrDefaultAsync(x => x.OrderId == OrderId);
-            order.ShipCode = ShipCode;
+            //order.ShipCode = ShipCode;
             order.StatusOrder = StatusOrder.AcceptOrder;
+            await _orderRepository.UpdateAsync(order);
+            return true;
+
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
+
+    public async Task<bool> UpdateStatus(Guid OrderId, StatusOrder statusOrder)
+    {
+        try
+        {
+            var order = await _orderRepository.Query()
+                   .SingleOrDefaultAsync(x => x.OrderId == OrderId);
+            if (order is null) return false;
+
+            order.StatusOrder = statusOrder;
             await _orderRepository.UpdateAsync(order);
             return true;
 
@@ -199,11 +248,12 @@ public class OrderService : IOrderService
                 .ThenInclude(od => od.Product)
                 .ThenInclude(p => p.OCOPSells)
                 .SingleOrDefaultAsync(x => x.OrderId == checkResponse.OrderId);
-           if (order == null) return;
+            if (order == null) return;
             checkResponse.Amount = (decimal)order.TotalAmount;
             await _VNPayPaymentResponseRepository.AddAsync(checkResponse);
 
-            if (checkResponse.TransactionStatus == "00" && checkResponse.TypePayment != TypePayment.Refunded) {
+            if (checkResponse.TransactionStatus == "00" && checkResponse.TypePayment != TypePayment.Refunded)
+            {
                 order.PaymentStatus = PaymentStatus.Paid;
                 await _adminBalanceService.AddOrderTransaction(order);
             }
@@ -221,7 +271,7 @@ public class OrderService : IOrderService
                 {
                     latestValidSell.SellVolume -= orderDetail.Quantity;
                 }
-                else if(latestValidSell != null && checkResponse.TypePayment == TypePayment.Refunded)
+                else if (latestValidSell != null && checkResponse.TypePayment == TypePayment.Refunded)
                 {
                     latestValidSell.SellVolume += orderDetail.Quantity;
                 }
@@ -233,32 +283,6 @@ public class OrderService : IOrderService
         {
             throw new Exception("Đã xảy ra lỗi vui lòng thử lại sau!");
         }
-        public async Task<List<VNPayPaymentResponse>> ListHistoryPayments()
-        {
-            try
-            {
-
-
-                return await _VNPayPaymentResponseRepository.Query()
-                    .Include(x => x.Order)
-                        .ThenInclude(o => o.Account)
-                    .Include(x => x.Order)
-                        .ThenInclude(o => o.OrderDetails)
-                            .ThenInclude(od => od.Product)
-                     .Include(x => x.Order)
-                        .ThenInclude(o => o.Account)
-                     .Include(x => x.BookingAgriculturalTour)
-                        .ThenInclude(x => x.AgriculturalTourPackage)
-                    .Include(x => x.BookingAgriculturalTour)
-                        .ThenInclude(x => x.Customer)
-                    .OrderByDescending(x => x.PayDate)
-                    .ToListAsync();
-            }
-            catch (Exception)
-            {
-                throw new Exception("Đã xảy ra lỗi, vui lòng thử lại sau!");
-            }
-        }
 
     }
     public async Task<List<VNPayPaymentResponse>> ListHistoryPaymentsOrder(Guid UserId)
@@ -268,7 +292,6 @@ public class OrderService : IOrderService
             // Lấy TouristFacility theo UserId
             var touristFacility = await _touristFacilityRepository.Query()
                 .SingleOrDefaultAsync(x => x.UserId == UserId);
-
 
             if (touristFacility == null)
                 return new List<VNPayPaymentResponse>();
@@ -323,5 +346,10 @@ public class OrderService : IOrderService
                .SingleOrDefaultAsync(x => x.OrderId == orderAcceptRequest.OrderId);
         order.StatusOrder = orderAcceptRequest.StatusOrder;
         await _orderRepository.UpdateAsync(order);
+    }
+
+    public Task<List<VNPayPaymentResponse>> ListHistoryPayments()
+    {
+        throw new NotImplementedException();
     }
 }

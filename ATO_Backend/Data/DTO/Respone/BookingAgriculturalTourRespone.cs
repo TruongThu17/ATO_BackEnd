@@ -18,8 +18,10 @@ namespace Data.DTO.Respone
         public virtual ICollection<VNPayPaymentResponseDTO>? VNPayPaymentResponses { get; set; }
         public CurrentDestinationInfo? CurrentDestination { get; set; }
         public int TotalBookedPeople { get; set; }  
-
-
+        public Guid? GroupId {  get; set; }
+        public List<Guid>? TourGuidIds { get; set; } = [];
+        public List<Guid?>? DriverIds { get; set; } = [];
+        public ICollection<BookingTourDestination>? Trackings { get; set; }
     }
 
     public class CurrentDestinationInfo
@@ -35,7 +37,7 @@ namespace Data.DTO.Respone
 
     public class BookingAccept
     {
-        public Guid BookingId { get; set; }
+        public Guid TourId { get; set; }
         public StatusBooking StatusBooking { get; set; }
     }
 }
