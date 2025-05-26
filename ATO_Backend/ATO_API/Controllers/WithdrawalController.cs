@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+
+﻿using Data.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.DashboardSer;
 using Service.WithdrawalSer;
@@ -18,7 +20,21 @@ public class WithdrawalController(IWithdrawalService withdrawalService, IDashboa
         var companyId = await dashboardService.GetCompanyIdFromUserIdAsync(Guid.Parse(userId!));
 
 
-        var id = facilityId is null ? companyId : facilityId;
+    [HttpGet("pending")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetPendingRequests()
+    {
+        var requests = await withdrawalService.GetAllPendingRequests();
+        return Ok(requests);
+    }
+    // lịch sử giải ngân của admin 
+    [HttpGet("history")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetHistoryRequests()
+    {
+        var requests = await withdrawalService.GetWithdrawalHistory_Admin();
+        return Ok(requests);
+    }
 
         var history = await withdrawalService.GetUserWithdrawalHistory(id ?? Guid.Empty);
         return Ok(history);

@@ -14,6 +14,5 @@ namespace Service.WithdrawalSer
         Task<List<WithdrawalHistory>> GetWithdrawalHistory_Admin();
         Task<bool> GenerateMonthlyWithdrawals();
         Task<WithdrawalHistory> GetWithdrawalHistory(Guid id);
-
     }
 }
