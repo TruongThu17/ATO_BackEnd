@@ -43,6 +43,11 @@ public class GeneralController(IGeneralService service, IDashboardService dashbo
             .Select(x => new Notification($"Đợt bán OCOP sắp hết hàng cho sản phẩm {x.Product!.ProductName}"))
             .ToList();
 
+        var expirationNotifications = ocops.Where(x => x.ExpiryDate.HasValue && x.ExpiryDate.Value.AddDays(7) >= DateTime.Now)
+           .Select(x => new Notification($"Đợt bán OCOP sắp hạn cho sản phẩm {x.Product!.ProductName}"))
+           .ToList();
+
+        notifications.AddRange(expirationNotifications);
         return Ok(notifications);
     }
 }
