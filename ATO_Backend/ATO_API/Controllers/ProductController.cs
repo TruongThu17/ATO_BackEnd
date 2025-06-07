@@ -44,6 +44,7 @@ namespace ATO_API.Controllers
                     var ocops = await _productService.GetListOCOPSellsByProductId_AFTO(item.ProductId, false);
                     var variations = _mapper.Map<List<OCOPSellDTO>>(ocops
                             .Where(x => x.ActiveStatus == true))
+                        .Where(x => x.SellVolume > 0)
                           .OrderBy(x => x.ExpiryDate);
                     foreach (var variation in variations)
                     {
